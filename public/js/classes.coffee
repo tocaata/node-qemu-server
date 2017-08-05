@@ -133,9 +133,11 @@ class FormCreateVMViewModel
     @isos  = ko.observableArray ['none'] # ['debian', 'ubuntu' ]
     
     @bootDevices = ['disk',        'iso']
-    @keyboards   = ['de',        'en-us']
+    @pciDevices  = ['02:00.0', '02:00.1', '03:00.0', '03:00.1']
+    @keyboards   = ['en-us',        'de']
     @netCards    = ['virtio',  'rtl8139']
     @vgaCards    = ['none', 'std', 'qxl']
+    @pciDevices  = []
 
     @cpuModels = [  {value:'QEMU 32-bit Virtual CPU version 1.6.0', qValue:'qemu32', tokens:['32bit', 'qemu']}
                   , {value:'QEMU 64-bit Virtual CPU version 1.6.0', qValue:'qemu64', tokens:['64bit', 'qemu']}
@@ -204,6 +206,7 @@ class FormCreateVMViewModel
     @vmName        = ko.observable()
     @bootVM        = ko.observable()
     @bootDevice    = ko.observable()
+    @pciDevice     = ko.observable()
     @enableVNC     = ko.observable()
     @enableSpice   = ko.observable()
     
@@ -223,6 +226,17 @@ class FormCreateVMViewModel
         return true
       return false
     , this
+
+    pciLine: ->
+      self = this
+      self.pciDevice = ko.observable()
+      self.multFunction = ko.observable()
+      self.xvga = ko.observable()
+
+    self.addPci: ->
+      self.pciDevices.push(new pciLine)
+    self.removePci:(line) ->
+      self.pciDevices.remove(line)
 
   reset: ->
     @cpuCount       @cpus[1]
