@@ -2,6 +2,7 @@
 vmHandler = require './vmHandler'
 ioServer  = undefined
 Disk      = require './src/disk'
+parser    = require './src/parser'
 
 socks  = {}
 
@@ -60,6 +61,11 @@ module.exports.start = (httpServer) ->
         
         if ret.status is 'success'
           sock.emit 'reset-create-vm-form'
+          
+    sock.on 'see-VM', (vmCfg) ->
+      args = parser.vmCfgToArgs vmCfg
+      console.log args
+      sock.emit 'msg', {type:'success', msg:"show qemu argument."}
 
 module.exports.toAll = (msg, args...) ->
   ioServer.sockets.emit msg, args...

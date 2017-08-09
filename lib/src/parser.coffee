@@ -31,6 +31,10 @@ module.exports.vmCfgToArgs = (cfg, cb = ->) ->
       .vga( cfg.hardware.vgaCard)
       .qmp( cfg.settings.qmpPort)
       .keyboard(cfg.settings.keyboard)
+
+# Enable PCI passthrough
+  for p in cfg.hardware.pci
+    args.pci(p)
       
   if cfg.hardware.cpu
     args.cpu cfg.hardware.cpu

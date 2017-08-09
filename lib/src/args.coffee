@@ -63,6 +63,17 @@ class Args
   cpu: (cpu) ->
     @pushArg '-cpu', cpu
     return this
+
+  pci: (pci) ->
+    arg = "vfio-pci"
+    if pci.pciDevice
+      arg += ",host=#{pci.pciDevice}"
+    if pci.multFunction
+      arg += ",multifunction=on"
+    if pci.xvga 
+      arg += ",x-vga=on"
+    @pushArg '-device', arg
+    return this
   
   accel: (accels) ->
     @pushArg '-machine', "accel=#{accels}"
@@ -87,14 +98,15 @@ class Args
     @macAddr = addr
     return this
   
-  net: (macAddr, card = 'rtl8139')->
+  net: (macAddr, card = 'rtl8139', type = 'normal')->
     @mac macAddr
-    
-    if os.type().toLowerCase() is 'darwin'
-      @pushArg '-net', "nic,model=#{card},macaddr=#{macAddr}", '-net', 'user'
-    else
-      @pushArg '-net', "nic,model=#{card},macaddr=#{macAddr}", '-net', 'tap'
-
+    if type is 'normal'
+      if os.type().toLowerCase() is 'darwin'
+        @pushArg '-net', "nic,model=#{card},macaddr=#{macAddr}", '-net', 'user'
+      else
+        @pushArg '-net', "nic,model=#{card},macaddr=#{macAddr}", '-net', 'tap'
+    else if type is 'bridge'
+      @pushArg '-net', 'bridge,vlan=0,br=br0,helper=/usr/lib/qemu-bridge-helper', '-net', "nic,model=#{card},vlan=0,macaddr=#{macAddr}"
     return this
   
   vga: (vga = 'none') ->

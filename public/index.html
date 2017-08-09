@@ -285,11 +285,52 @@
                   </div>
 
                   <div class="form-group">
-                    <label for="bootDevice"  class="col-md-2 control-label">select GPU passthrough</label>
+                    <label class="col-md-2 control-label">PCI devices</label>
                     <div class="col-md-8">
-                      <div class="col-md-8">
-                        <select data-bind="options: pciDevices, value: pciDevice" class="form-control" id="pciDevice"></select> 
-                      </div>
+                      <table style="background: #f5f5f5" class="table table-striped">
+                        <thead><tr>
+                          <th class="col-md-3">PCI address</th>
+                          <th class="col-md-2">Multfunction</th>
+                          <th class="col-md-2">x-vga</th>
+                          <th class="col-md-1">Delete</th>
+                        </tr></thead>
+                        <tbody data-bind="foreach: pciDevices">
+                          <tr>
+                            <td class="col-md-3" data-bind="text: pciDevice"></td>
+                            <td class="col-md-2" data-bind="text: multFunction"></td>
+                            <td class="col-md-2" data-bind="text: xvga"></td>
+                            <td class="col-md-2">
+                              <a href="#" data-bind="click: $root.removePci" class="glyphicon glyphicon-trash"></a>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <div class="col-md-offset-2 col-md-4">
+                      <select data-bind="options: availablePciDevices, value: pciDevice" class="form-control" id="pciDevice"></select> 
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="col-md-offset-2 col-md-8">
+                      <label>
+                        <input type="checkbox" data-bind="checked: multFunction">
+                        enable MultFunction
+                      </label>
+                      <span class="help-block">multiple function.</span>
+                    </div>
+                    <div class="col-md-offset-2 col-md-8">
+                      <label>
+                        <input type="checkbox" data-bind="checked: xvga">
+                        enable x-vga
+                      </label>
+                      <span class="help-block">Passthrough PCI device as GPU card.</span>
+                    </div>
+                    <div class="col-md-offset-2 col-md-8">
+                      <button class="btn" data-bind="click: addPci">Add PCI</button>
+                      <span class="help-block">Add a pci device.</span>
                     </div>
                   </div>
                   
@@ -324,7 +365,7 @@
                   <div class="form-group" data-bind="visible: enableCpuModel()">
                     <label for="vmName" class="col-md-2 control-label">CPU model</label>
                     <div class="col-md-8">
-                      <input id="cpuModelName" type="text" id="vmName" class="form-control">
+                      <input id="cpuModelName" type="text" id="vmName" class="form-control" data-bind="value: cpuModel">
                       <span class="help-block">type your cpu model.</span>
                     </div>
                   </div>
@@ -395,12 +436,31 @@
                       <span class="help-block">Select the network card controller. For Windows without spice guest tools installed use the rtl8139 controller. After installed guest tools you can switch to the faster virtio controller.</span>
                     </div>
                   </div>
-                  
 
- 
-                  
-                  
-  
+                  <div class="form-group" data-bind="visible: enableNet()">
+                    <label for="netType"  class="col-md-2 control-label">Network Device</label>
+                    <div class="col-md-8">
+                      <select data-bind="options: netTypes, value: netType, enable: macAddr().length == 17 && enableNet()" class="form-control" id="netType"></select> 
+                      <span class="help-block">Select the method to create network card.</span>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <div class="col-md-offset-2 col-md-8">
+                      <label>
+                        <button type="checkbox" data-bind="click: seeArg" class="btn btn-primary">See</button>
+                        See Qemu command line.
+                      </label>
+                      <span class="help-block">See Qemu command line</span>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="netType"  class="col-md-2 control-label">Qemu script</label>
+                    <div class="col-md-8">
+                      <span></span>
+                    </div>
+                  </div>
                 </div>
               </form>
               </div>

@@ -126,17 +126,25 @@ class ImageViewModel
     @images.remove (disk) ->
       return disk.name is diskName
 
+class PciLine
+  constructor:(pci, multf, xvga) ->
+    @pciDevice    = pci
+    @multFunction = multf
+    @xvga         = xvga
+
 
 class FormCreateVMViewModel
   constructor: ->
+    that = this
     @disks = ko.observableArray()
     @isos  = ko.observableArray ['none'] # ['debian', 'ubuntu' ]
     
     @bootDevices = ['disk',        'iso']
-    @pciDevices  = ['02:00.0', '02:00.1', '03:00.0', '03:00.1']
+    @availablePciDevices  = ['02:00.0', '02:00.1', '03:00.0', '03:00.1']
+    @netCards    = ['virtio', 'rtl8139', 'e1000']
     @keyboards   = ['en-us',        'de']
-    @netCards    = ['virtio',  'rtl8139']
     @vgaCards    = ['none', 'std', 'qxl']
+    @netTypes    = ['normal',   'bridge']
     @pciDevices  = []
 
     @cpuModels = [  {value:'QEMU 32-bit Virtual CPU version 1.6.0', qValue:'qemu32', tokens:['32bit', 'qemu']}
@@ -212,10 +220,15 @@ class FormCreateVMViewModel
     
     @enableVGACard = ko.observable()
     @vgaCard       = ko.observable()
+    @pciDevice     = ko.observable()
+    @pciDevices    = ko.observableArray()
+    @multFunction  = ko.observable(false)
+    @xvga          = ko.observable(false)
 
     @enableNet = ko.observable()
     @macAddr   = ko.observable()
     @netCard   = ko.observable()
+    @netType   = ko.observable()
 
     @reset()
 
@@ -227,16 +240,11 @@ class FormCreateVMViewModel
       return false
     , this
 
-    pciLine: ->
-      self = this
-      self.pciDevice = ko.observable()
-      self.multFunction = ko.observable()
-      self.xvga = ko.observable()
+    @removePci = (line) ->
+      that.pciDevices.remove(line)
 
-    self.addPci: ->
-      self.pciDevices.push(new pciLine)
-    self.removePci:(line) ->
-      self.pciDevices.remove(line)
+  addPci: ->
+    this.pciDevices.push(new PciLine(this.pciDevice(), this.multFunction(), this.xvga()))    
 
   reset: ->
     @cpuCount       @cpus[1]
@@ -300,6 +308,8 @@ class FormCreateVMViewModel
              iso       : if @selectedIso() isnt 'none' then @selectedIso() else false
              macAddr   : if @enableNet()  and @macAddr().length is 17 then @macAddr() else false
              netCard   : if @enableNet()  and @macAddr().length is 17 then @netCard() else false
+             netType   : if @enableNet()  and @macAddr().length is 17 then @netType() else false
+             pci       : @pciDevices()
              vgaCard   : if @enableVGACard() then @vgaCard()                          else 'none' }
          , settings: {
              boot       : @bootVM()
@@ -325,6 +335,28 @@ class FormCreateVMViewModel
     
     console.log mac
     console.log @macAddr()
+
+  seeArg: ->
+    vm = { name : @vmName()
+         , hardware: {
+             cpus      : @cpuCount().num
+             cpu       : if @enableCpuModel() then @cpuModel() else false
+             ram       : @selectedMemory().num
+             disk      : if @diskOrPartition() is 'disk'      then @disk()      else false
+             partition : if @diskOrPartition() is 'partition' then @partition() else false
+             iso       : if @selectedIso() isnt 'none' then @selectedIso() else false
+             macAddr   : if @enableNet()  and @macAddr().length is 17 then @macAddr() else false
+             netCard   : if @enableNet()  and @macAddr().length is 17 then @netCard() else false
+             netType   : if @enableNet()  and @macAddr().length is 17 then @netType() else false
+             pci       : @pciDevices()
+             vgaCard   : if @enableVGACard() then @vgaCard()                          else 'none' }
+         , settings: {
+             boot       : @bootVM()
+             bootDevice : @bootDevice()
+             vnc        : @enableVNC()
+             spice      : @enableSpice()
+             keyboard   : @keyboard() }}
+    app.socket.emit 'see-VM', vm
 
 app.c.ImageModel            = ImageModel
 app.c.ImageViewModel        = ImageViewModel
