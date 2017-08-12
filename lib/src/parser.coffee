@@ -26,7 +26,8 @@ module.exports.vmCfgToArgs = (cfg, cb = ->) ->
 #       .noStart()
 #       .noShutdown()
   
-  args.cpus(cfg.hardware.cpus)
+  args.arch(cfg.hardware.arch)
+      .cpus(cfg.hardware.cpus)
       .ram( cfg.hardware.ram)
       .vga( cfg.hardware.vgaCard)
       .qmp( cfg.settings.qmpPort)
@@ -35,6 +36,9 @@ module.exports.vmCfgToArgs = (cfg, cb = ->) ->
 # Enable PCI passthrough
   for p in cfg.hardware.pci
     args.pci(p)
+
+  for o in cfg.hardware.otherOptions
+    args.option(o)
       
   if cfg.hardware.cpu
     args.cpu cfg.hardware.cpu

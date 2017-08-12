@@ -79,3 +79,15 @@
 .tt-suggestion p {
     margin: 0;
 }
+
+div.section {
+    padding: 10px;
+    margin: 20px 0;
+    border-left-color: #ce4844;border: 1px solid #eee;
+    border-left-width: 5px;
+    border-radius: 3px;
+}
+
+div.section-color {
+    border-left-color: #ce4844;
+}

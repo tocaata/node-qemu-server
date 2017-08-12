@@ -59,6 +59,10 @@ class Args
   cpus: (n) ->
     @pushArg '-smp', n
     return this
+
+  arch: (arch) ->
+    @pushArg '-machine', arch
+    return this
   
   cpu: (cpu) ->
     @pushArg '-cpu', cpu
@@ -70,10 +74,12 @@ class Args
       arg += ",host=#{pci.pciDevice}"
     if pci.multFunction
       arg += ",multifunction=on"
-    if pci.xvga 
+    if pci.xvga
       arg += ",x-vga=on"
     @pushArg '-device', arg
     return this
+  option: (option) ->
+    @pushArg option.option, option.argument
   
   accel: (accels) ->
     @pushArg '-machine', "accel=#{accels}"

@@ -132,6 +132,11 @@ class PciLine
     @multFunction = multf
     @xvga         = xvga
 
+class Option
+  constructor:(option, argument) ->
+    @option       = option
+    @argument     = argument
+
 
 class FormCreateVMViewModel
   constructor: ->
@@ -145,6 +150,7 @@ class FormCreateVMViewModel
     @keyboards   = ['en-us',        'de']
     @vgaCards    = ['none', 'std', 'qxl']
     @netTypes    = ['normal',   'bridge']
+    @archs       = ['pc', 'pc-i440fx-2.7', 'pc-i440fx-2.8', 'q35', 'pc-q35-2.4', 'pc-q35-2.5', 'pc-q35-2.6', 'pc-q35-2.7']
     @pciDevices  = []
 
     @cpuModels = [  {value:'QEMU 32-bit Virtual CPU version 1.6.0', qValue:'qemu32', tokens:['32bit', 'qemu']}
@@ -203,6 +209,7 @@ class FormCreateVMViewModel
     @cpuModel       = ko.observable()
 
     @selectedMemory = ko.observable()
+    @selectedArch   = ko.observable()
 
     @diskOrPartition = ko.observable()
     @partition       = ko.observable()
@@ -217,6 +224,8 @@ class FormCreateVMViewModel
     @pciDevice     = ko.observable()
     @enableVNC     = ko.observable()
     @enableSpice   = ko.observable()
+    @option        = ko.observable()
+    @argument      = ko.observable()
     
     @enableVGACard = ko.observable()
     @vgaCard       = ko.observable()
@@ -224,6 +233,7 @@ class FormCreateVMViewModel
     @pciDevices    = ko.observableArray()
     @multFunction  = ko.observable(false)
     @xvga          = ko.observable(false)
+    @otherOptions  = ko.observableArray()
 
     @enableNet = ko.observable()
     @macAddr   = ko.observable()
@@ -243,8 +253,22 @@ class FormCreateVMViewModel
     @removePci = (line) ->
       that.pciDevices.remove(line)
 
+    @removeOption = (option) ->
+      that.otherOptions.remove(option)
+
   addPci: ->
-    this.pciDevices.push(new PciLine(this.pciDevice(), this.multFunction(), this.xvga()))    
+    this.pciDevices.push(new PciLine(this.pciDevice(), this.multFunction(), this.xvga()))
+    this.pciDevice("")
+    this.multFunction(false)
+    this.xvga(false)
+
+  addOption: ->
+    @otherOptions.push(new Option(@option(), @argument()))
+    @option("");
+    @argument("");
+
+  selectOption: (option) ->
+    @option(option)
 
   reset: ->
     @cpuCount       @cpus[1]
@@ -298,27 +322,7 @@ class FormCreateVMViewModel
   
   create: ->
     console.log "create VM"
-    vm = { name : @vmName()
-         , hardware: {
-             cpus      : @cpuCount().num
-             cpu       : if @enableCpuModel() then @cpuModel() else false
-             ram       : @selectedMemory().num
-             disk      : if @diskOrPartition() is 'disk'      then @disk()      else false
-             partition : if @diskOrPartition() is 'partition' then @partition() else false
-             iso       : if @selectedIso() isnt 'none' then @selectedIso() else false
-             macAddr   : if @enableNet()  and @macAddr().length is 17 then @macAddr() else false
-             netCard   : if @enableNet()  and @macAddr().length is 17 then @netCard() else false
-             netType   : if @enableNet()  and @macAddr().length is 17 then @netType() else false
-             pci       : @pciDevices()
-             vgaCard   : if @enableVGACard() then @vgaCard()                          else 'none' }
-         , settings: {
-             boot       : @bootVM()
-             bootDevice : @bootDevice()
-             vnc        : @enableVNC()
-             spice      : @enableSpice()
-             keyboard   : @keyboard() }}
-
-    app.socket.emit 'create-VM', vm
+    app.socket.emit 'create-VM', @getVmArgs()
 #    @images.remove @disk()
 
   generateMacAddr: ->    
@@ -337,26 +341,31 @@ class FormCreateVMViewModel
     console.log @macAddr()
 
   seeArg: ->
+    app.socket.emit 'see-VM', @getVmArgs()
+
+  getVmArgs: ->
     vm = { name : @vmName()
          , hardware: {
-             cpus      : @cpuCount().num
-             cpu       : if @enableCpuModel() then @cpuModel() else false
-             ram       : @selectedMemory().num
-             disk      : if @diskOrPartition() is 'disk'      then @disk()      else false
-             partition : if @diskOrPartition() is 'partition' then @partition() else false
-             iso       : if @selectedIso() isnt 'none' then @selectedIso() else false
-             macAddr   : if @enableNet()  and @macAddr().length is 17 then @macAddr() else false
-             netCard   : if @enableNet()  and @macAddr().length is 17 then @netCard() else false
-             netType   : if @enableNet()  and @macAddr().length is 17 then @netType() else false
-             pci       : @pciDevices()
-             vgaCard   : if @enableVGACard() then @vgaCard()                          else 'none' }
+             arch         : @selectedArch()
+             cpus         : @cpuCount().num
+             cpu          : if @enableCpuModel() then @cpuModel() else false
+             ram          : @selectedMemory().num
+             disk         : if @diskOrPartition() is 'disk'      then @disk()      else false
+             partition    : if @diskOrPartition() is 'partition' then @partition() else false
+             iso          : if @selectedIso() isnt 'none' then @selectedIso() else false
+             macAddr      : if @enableNet()  and @macAddr().length is 17 then @macAddr() else false
+             netCard      : if @enableNet()  and @macAddr().length is 17 then @netCard() else false
+             netType      : if @enableNet()  and @macAddr().length is 17 then @netType() else false
+             pci          : @pciDevices()
+             otherOptions : @otherOptions()
+             vgaCard      : if @enableVGACard() then @vgaCard() else 'none' }
          , settings: {
              boot       : @bootVM()
              bootDevice : @bootDevice()
              vnc        : @enableVNC()
              spice      : @enableSpice()
              keyboard   : @keyboard() }}
-    app.socket.emit 'see-VM', vm
+    return vm
 
 app.c.ImageModel            = ImageModel
 app.c.ImageViewModel        = ImageViewModel
