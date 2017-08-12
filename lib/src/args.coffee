@@ -79,7 +79,11 @@ class Args
     @pushArg '-device', arg
     return this
   option: (option) ->
-    @pushArg option.option, option.argument
+    if (option.argument == undefined || option.argument == null){
+      @pushArg option.option
+    } else {
+      @pushArg option.option, option.argument
+    }
   
   accel: (accels) ->
     @pushArg '-machine', "accel=#{accels}"
