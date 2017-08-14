@@ -29,6 +29,12 @@ app.hostVM         = hostVM
     
     if vm.hardware.disk
       formCreateVMVM.deleteDisk vm.hardware.disk
+
+  app.socket.on 'update-vm', (vm) ->
+    # console.dir vm
+    vmsVM.update vm
+    formCreateVMVM.createModel()
+
   
   app.socket.on 'set-vm-status', (vmName, status) ->
     console.log "VM status #{vmName} #{status}"
@@ -59,6 +65,9 @@ app.hostVM         = hostVM
   
   app.socket.on 'reset-create-vm-form', ->
     formCreateVMVM.reset()
+
+  app.socket.on 'show-VM', (script)->
+    formCreateVMVM.setScript(script)
     
   app.socket.on 'reset-create-disk-form', ->
     ($ 'FORM#formDiskCreate INPUT#diskName').val ''

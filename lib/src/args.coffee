@@ -60,8 +60,11 @@ class Args
     @pushArg '-smp', n
     return this
 
-  arch: (arch) ->
-    @pushArg '-machine', arch
+  arch: (arch, accel=null) ->
+    if accel
+      @pushArg '-machine', [arch, "accel=#{accel}"].join(",")
+    else
+      @pushArg '-machine', arch
     return this
   
   cpu: (cpu) ->
@@ -78,6 +81,7 @@ class Args
       arg += ",x-vga=on"
     @pushArg '-device', arg
     return this
+
   option: (option) ->
     if (option.argument == undefined || option.argument == null)
       @pushArg option.option

@@ -33,6 +33,19 @@ class VmsViewModel
     
     @vms.sort (left, right) ->
       return left.name is right.name ? 0 : (left.name < right.name ? -1 : 1)
+
+  update: (vmIn) ->
+    i = @vms().findIndex (value, index, arr) ->
+      return value.name == vmIn.name
+
+    vmIn.status = ko.observable vmIn.status
+    vmIn.expandedStatus = ko.observable false
+    vmIn.expandedIso    = ko.observable false
+    @vms.splice(i, 1, vmIn)
+
+    @vms.sort (left, right) ->
+      return left.name is right.name ? 0 : (left.name < right.name ? -1 : 1)
+
   
   start: (vm) ->
     console.log "Start: #{vm.name}"
@@ -53,6 +66,11 @@ class VmsViewModel
   stop: (vm) ->
     console.log "Stop: #{vm.name}"
     app.socket.emit 'qmp-command', 'stop', vm.name
+
+  edit: (vm) ->
+    console.log "Edit: #{vm.name}"
+    app.formCreateVMVM.editModel vm
+    #app.socket.emit 'edit-vm', vm.name
   
   setStatus: (vmName, status) ->
     for vm in @vms()
@@ -231,9 +249,10 @@ class FormCreateVMViewModel
     @vgaCard       = ko.observable()
     @pciDevice     = ko.observable()
     @pciDevices    = ko.observableArray()
-    @multFunction  = ko.observable(false)
-    @xvga          = ko.observable(false)
+    @multFunction  = ko.observable()
+    @xvga          = ko.observable()
     @otherOptions  = ko.observableArray()
+    @showScript    = ko.observable()
 
     @enableNet = ko.observable()
     @macAddr   = ko.observable()
@@ -257,10 +276,10 @@ class FormCreateVMViewModel
       that.otherOptions.remove(option)
 
   addPci: ->
-    this.pciDevices.push(new PciLine(this.pciDevice(), this.multFunction(), this.xvga()))
-    this.pciDevice("")
-    this.multFunction(false)
-    this.xvga(false)
+    @pciDevices.push(new PciLine(@pciDevice(), @multFunction(), @xvga()))
+    @pciDevice("")
+    @multFunction(false)
+    @xvga(false)
 
   addOption: ->
     @otherOptions.push(new Option(@option(), @argument()))
@@ -271,6 +290,7 @@ class FormCreateVMViewModel
     @option(option)
 
   reset: ->
+    @selectedArch   'pc'
     @cpuCount       @cpus[1]
     @enableCpuModel false
     @cpuModel       @cpuModels[3].qValue
@@ -296,6 +316,14 @@ class FormCreateVMViewModel
     @enableNet false
     @macAddr   ''
     @netCard   @netCards[1]
+
+    @pciDevices   []
+    @otherOptions []
+    @pciDevice    ''
+    @multFunction false
+    @xvga         false
+    @option       ''
+    @argument     ''
   
   getCpuModels: ->
     return @cpuModels
@@ -319,29 +347,9 @@ class FormCreateVMViewModel
   deleteDisk: (diskName) ->
     @disks.remove (disk) ->
       return disk is diskName
-  
-  create: ->
-    console.log "create VM"
-    app.socket.emit 'create-VM', @getVmArgs()
-#    @images.remove @disk()
 
-  generateMacAddr: ->    
-    array = new Uint8Array 24
-    window.crypto.getRandomValues array
-    hex = ''
-    hex += n.toString 16 for n in array
-    
-    mac = hex.slice(0,12).match(/.{2}/g).join(':')
-    bin = "0000#{parseInt(mac.charAt(1), 16).toString 2}".slice -4 # at position, from 0, 1 convert from base 16 to base 2
-    bin = "#{bin.slice 0,3}0"
-
-    @macAddr "#{mac.charAt 0}#{parseInt(bin, 2).toString 16}:#{mac.slice 3}"
-    
-    console.log mac
-    console.log @macAddr()
-
-  seeArg: ->
-    app.socket.emit 'see-VM', @getVmArgs()
+  setScript:(script) ->
+    @showScript(script)
 
   getVmArgs: ->
     vm = { name : @vmName()
@@ -366,6 +374,68 @@ class FormCreateVMViewModel
              spice      : @enableSpice()
              keyboard   : @keyboard() }}
     return vm
+
+  editModel:(vm) ->
+    @vmName(vm.name)
+    @selectedArch(vm.hardware.arch)
+    @cpuCount(@cpus.find((c) -> 
+      c.num == vm.hardware.cpus
+      ))
+    if vm.hardware.cpu
+      @enableCpuModel(true)
+      @cpuModel(vm.hardware.cpu)
+
+    @selectedMemory(@memory.find((m) ->
+      m.num == vm.hardware.ram
+      ))
+
+    @pciDevices(vm.hardware.pci)
+    @otherOptions(vm.hardware.otherOptions)
+    @bootVM(vm.settings.boot)
+    @bootDevice(vm.settings.bootDevice)
+    @enableVNC(vm.settings.vnc)
+    @enableSpice(vm.settings.spice)
+    @keyboard(vm.settings.keyboard)
+    if vm.hardware.macAddr.length is 17
+      @enableNet(true)
+      @netCard(vm.hardware.netCard)
+      @netType(vm.hardware.netType)
+      @macAddr(vm.hardware.macAddr)
+    $('#createVMTab').removeClass('create-vm').addClass('edit-vm')
+    $(".nav-tabs li:nth-child(5)>a").click()
+
+  createModel: ->
+    @reset()
+    $('#createVMTab').removeClass('edit-vm').addClass('create-vm')
+    # $(".nav-tabs li:nth-child(2)>a").click()
+
+  edit: ->
+    console.log "edit VM"
+    app.socket.emit 'edit-VM', @getVmArgs()
+
+  seeArg: ->
+    app.socket.emit 'see-VM', @getVmArgs()
+
+  create: ->
+    console.log "create VM"
+    app.socket.emit 'create-VM', @getVmArgs()
+#    @images.remove @disk()
+
+  generateMacAddr: ->    
+    array = new Uint8Array 24
+    window.crypto.getRandomValues array
+    hex = ''
+    hex += n.toString 16 for n in array
+    
+    mac = hex.slice(0,12).match(/.{2}/g).join(':')
+    bin = "0000#{parseInt(mac.charAt(1), 16).toString 2}".slice -4 # at position, from 0, 1 convert from base 16 to base 2
+    bin = "#{bin.slice 0,3}0"
+
+    @macAddr "#{mac.charAt 0}#{parseInt(bin, 2).toString 16}:#{mac.slice 3}"
+    
+    console.log mac
+    console.log @macAddr()
+
 
 app.c.ImageModel            = ImageModel
 app.c.ImageViewModel        = ImageViewModel

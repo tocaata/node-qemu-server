@@ -26,8 +26,7 @@ module.exports.vmCfgToArgs = (cfg, cb = ->) ->
 #       .noStart()
 #       .noShutdown()
   
-  args.arch(cfg.hardware.arch)
-      .cpus(cfg.hardware.cpus)
+  args.cpus(cfg.hardware.cpus)
       .ram( cfg.hardware.ram)
       .vga( cfg.hardware.vgaCard)
       .qmp( cfg.settings.qmpPort)
@@ -44,8 +43,10 @@ module.exports.vmCfgToArgs = (cfg, cb = ->) ->
     args.cpu cfg.hardware.cpu
 
   if osType is 'linux'
-    args.accel('kvm')
+    args.arch(cfg.hardware.arch, "kvm")
         .kvm()
+  else
+    args.arch(cfg.hardware.arch)
 
   ipAddr = []
   for interfaceName,intfce of os.networkInterfaces()
@@ -60,7 +61,7 @@ module.exports.vmCfgToArgs = (cfg, cb = ->) ->
     else
       console.log "SPICE only supported with linux"
   
-  if      cfg.hardware.disk
+  if cfg.hardware.disk
     args.hd cfg.hardware.disk
   else if cfg.hardware.partition
     args.partition cfg.hardware.partition

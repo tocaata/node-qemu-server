@@ -91,3 +91,11 @@ div.section {
 div.section-color {
     border-left-color: #ce4844;
 }
+
+.create-vm .for-edit {
+    display: none;
+}
+
+.edit-vm .for-create {
+    display: none;
+}

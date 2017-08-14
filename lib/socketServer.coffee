@@ -61,11 +61,19 @@ module.exports.start = (httpServer) ->
         
         if ret.status is 'success'
           sock.emit 'reset-create-vm-form'
+
+    sock.on 'edit-VM', (vmCfg) ->
+      vmHandler.editVm vmCfg, (ret) ->
+        sock.emit 'msg', ret
+        
+        if ret.status is 'success'
+          sock.emit 'reset-create-vm-form'
           
     sock.on 'see-VM', (vmCfg) ->
       args = parser.vmCfgToArgs vmCfg
       console.log args
       sock.emit 'msg', {type:'success', msg:"show qemu argument."}
+      sock.emit 'show-VM', "qemu-system-x86_64" + args.args.join(" ")
 
 module.exports.toAll = (msg, args...) ->
   ioServer.sockets.emit msg, args...

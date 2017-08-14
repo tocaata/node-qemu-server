@@ -190,7 +190,7 @@
         </div> <!-- listIsoTab -->
         
         <!-- GUEST CREATION TAB -->
-        <div class="tab-pane" id="createVMTab">
+        <div class="tab-pane create-vm" id="createVMTab">
           <div class="row-fluid">
             <div class="span10" style="margin-left:20px;margin-top:10px;">
               <div class="row">
@@ -198,7 +198,7 @@
 
                 <div class="col-md-6">
 
-                  <div class="form-group">
+                  <div class="form-group for-create">
                     <label for="vmName" class="col-md-2 control-label">Guest name</label>
                     <div class="col-md-8">
                       <input data-bind="value: vmName" type="text" id="vmName" class="form-control">
@@ -342,10 +342,24 @@
                     </div>
                   </div>
                   
-                  <div class="form-group">
+                  <div class="form-group for-create">
                     <div class="col-md-offset-2 col-md-8">
-                      <button data-bind="click: create, enable: checkCreate()" class="btn btn-primary">create</button>
+                      <button data-bind="click: create" class="btn btn-primary">create</button>
                       <span class="help-block">Create the VM with selected settings.</span>
+                    </div>
+                  </div>
+
+                  <div class="form-group for-edit">
+                    <div class="col-md-offset-2 col-md-8">
+                      <button data-bind="click: edit" class="btn btn-primary">save</button>
+                      <span class="help-block">Edit this VM with selected settings.</span>
+                    </div>
+                  </div>
+
+                  <div class="form-group for-edit">
+                    <div class="col-md-offset-2 col-md-8">
+                      <button data-bind="click: createModel" class="btn btn-primary">cancel</button>
+                      <span class="help-block">Cancel this edit.</span>
                     </div>
                   </div>
 
@@ -517,7 +531,7 @@
                     <div class="form-group">
                       <div class="col-md-offset-2 col-md-8">
                         <label>
-                          <button type="checkbox" data-bind="click: seeArg" class="btn btn-sm btn-success">See</button>
+                          <button type="checkbox" data-bind="click: seeArg" class="btn btn-default">See</button>
                           See Qemu command line.
                         </label>
                         <span class="help-block">See Qemu command line</span>
@@ -527,7 +541,7 @@
                     <div class="form-group">
                       <label for="netType"  class="col-md-2 control-label">Qemu script</label>
                       <div class="col-md-8">
-                        <span></span>
+                        <span data-bind="text: showScript"></span>
                       </div>
                     </div>
                   </div>

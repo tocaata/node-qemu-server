@@ -52,6 +52,37 @@ module.exports.createVm = (vmCfg, cb) ->
 
   cb {status:'success', msg:'created vm'}
 
+###
+#   update VM
+###
+module.exports.editVm = (vmCfg, cb) ->
+  curVm = null;
+  for vm in vms
+    if vm.name is vmCfg.name
+      curVm = vm
+
+  if curVm == null
+    cb status:'error', msg:"VM with the name '#{vmCfg.name}' is not exists"
+    return
+
+  vmCfg.status = 'stopped'
+  vmCfg.settings['qmpPort'] = config.getFreeQMPport()
+  if vmCfg.settings.vnc
+    vmCfg.settings.vnc      = config.getFreeVNCport()
+  if vmCfg.settings.spice
+    vmCfg.settings.spice    = config.getFreeSPICEport()
+
+  Obj = curVm.edit(vmCfg)
+  socketServer.toAll 'update-vm', vmCfg
+
+  if vmCfg.settings.boot is true
+    obj.start ->
+      console.log "vm #{vmCfg.name} started"
+      cb {status:'success', msg:'vm created and started'}
+      socketServer.toAll 'set-vm-status', vmCfg.name, 'running'
+      obj.setStatus 'running'
+
+  cb {status:'success', msg:'edited vm'}
 
 ###
   NEW ISO

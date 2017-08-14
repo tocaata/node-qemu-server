@@ -9,6 +9,14 @@ class Vm
     @qmp     = new qmp.Qmp @name
 
     vmConf.save @cfg
+  edit: (@cfg) ->
+    delete @qmp
+    @process = new proc.Process()
+    @qmp     = new qmp.Qmp @name
+    delete @process
+
+    vmConf.save @cfg
+    @
   
   setStatus: (status) ->
     @cfg.status = status
