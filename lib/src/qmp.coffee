@@ -124,12 +124,12 @@ class Qmp
     @sendCmd "device_add", {'driver':'usb-host', 'vendorid':'6940', 'productid':'6919'}, cb
   hid_unattach: (cb) ->
     @sendCmd "qom-list", {'path':'/machine/unattached'}, (result) ->
-      for r in result
-        if r['type'] == "child<usb-host>"
-          @sendCmd "device_del", {'id':"/machine/unattached/" + r['name']}, cb
+      for r in result.data
+        if r.type == "child<usb-host>"
+          @sendCmd "device_del", {'id':"/machine/unattached/" + r.name}, cb
     @sendCmd "qom-list", {'path':'/machine/peripheral-anon'}, (result) ->
-      for r in result
-        if r['type'] == "child<usb-host>"
-          @sendCmd "device_del", {'id':"/machine/peripheral-anon/" + r['name']}, cb
+      for r in result.data
+        if r.type == "child<usb-host>"
+          @sendCmd "device_del", {'id':"/machine/peripheral-anon/" + r.name}, cb
   
 exports.Qmp = Qmp
