@@ -120,15 +120,20 @@ class Qmp
     @sendCmd 'balloon', {value:mem}, cb
 
   hid_attach: (cb) ->
-    @sendCmd "device_add", {'driver':'usb-host', 'vendorid':'1133', 'productid':'49734'}
-    @sendCmd "device_add", {'driver':'usb-host', 'vendorid':'6940', 'productid':'6919'}
+    @sendCmd "device_add", {'driver':'usb-host', 'vendorid':'1133', 'productid':'49734'}, cb
+    @sendCmd "device_add", {'driver':'usb-host', 'vendorid':'6940', 'productid':'6919'}, cb
   hid_unattach: (cb) ->
     hids = []
     @sendCmd "qom-list", {'path':'/machine/unattached'}, (result) ->
       for r of result
         r['type'] == "child<usb-host>"
-        hids.push r['name']
+        hids.push "/machine/unattached/" + r['name']
+    @sendCmd "qom-list", {'path':'/machine/peripheral-anon'}, (result) ->
+      for r of result
+        r['type'] == "child<usb-host>"
+        hids.push "/machine/peripheral-anon/" + r['name']
     for hid in hids
-      @sendCmd "device_del", {'id':"/machine/unattached/" + hid}
+      console.log {'id':"/machine/unattached/" + hid}
+      @sendCmd "device_del", {'id':hid}, cb
   
 exports.Qmp = Qmp
