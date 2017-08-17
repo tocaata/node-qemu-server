@@ -90,9 +90,9 @@
                 <td data-bind="text: false != hardware.disk ? hardware.disk : hardware.partition "></td>
                 <td style="cursor:pointer;" data-bind="text: hardware.iso == false ? 'none' : hardware.iso, click: $parent.expandIso"</td>
                 <td>
-
-
                   <button data-bind="click: $root.edit, visible: status() == 'stopped'" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-cog" /></button>
+                  <button data-bind="click: $root.addHid" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-link" /></button>
+                  <button data-bind="click: $root.rmHid" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eject" /></button>
                 </td>
                 <td><button data-bind="click: $root.remove, visible: status() == 'stopped'" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-trash" /></button></td>
               </tr>

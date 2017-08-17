@@ -59,6 +59,12 @@ class Vm
   status: ->
     @qmp.status()
 
+  hid_attach: (cb) ->
+    @qmp.hid_attach cb
+
+  hid_unattach: (cb) ->
+    @qmp.hid_unattach cb
+
 exports.Vm = Vm
   
 

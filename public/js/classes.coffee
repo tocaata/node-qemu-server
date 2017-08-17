@@ -71,6 +71,12 @@ class VmsViewModel
     console.log "Edit: #{vm.name}"
     app.formCreateVMVM.editModel vm
     #app.socket.emit 'edit-vm', vm.name
+
+  addHid: (vm) ->
+    console.log "AddHID: #{vm.name}"
+    app.socket.emit 'qmp-command', 'hid_attach', vm.name
+  rmHid: (vm) ->
+    app.socket.emit 'qmp-command', 'hid_unattach', vm.name
   
   setStatus: (vmName, status) ->
     for vm in @vms()

@@ -68,6 +68,7 @@ module.exports.start = (httpServer) ->
         
         if ret.status is 'success'
           sock.emit 'reset-create-vm-form'
+
           
     sock.on 'see-VM', (vmCfg) ->
       args = parser.vmCfgToArgs vmCfg
