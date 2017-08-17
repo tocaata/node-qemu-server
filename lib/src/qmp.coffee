@@ -125,15 +125,15 @@ class Qmp
   hid_unattach: (cb) ->
     hids = []
     @sendCmd "qom-list", {'path':'/machine/unattached'}, (result) ->
-      for r of result
-        r['type'] == "child<usb-host>"
-        hids.push "/machine/unattached/" + r['name']
+      for r in result
+        if r['type'] == "child<usb-host>"
+          hids.push "/machine/unattached/" + r['name']
     @sendCmd "qom-list", {'path':'/machine/peripheral-anon'}, (result) ->
-      for r of result
-        r['type'] == "child<usb-host>"
-        hids.push "/machine/peripheral-anon/" + r['name']
+      for r in result
+        if r['type'] == "child<usb-host>"
+          hids.push "/machine/peripheral-anon/" + r['name']
     for hid in hids
-      console.log {'id':"/machine/unattached/" + hid}
+      console.log {'id':hid}
       @sendCmd "device_del", {'id':hid}, cb
   
 exports.Qmp = Qmp
