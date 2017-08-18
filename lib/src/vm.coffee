@@ -11,9 +11,9 @@ class Vm
     vmConf.save @cfg
   edit: (@cfg) ->
     delete @qmp
+    delete @process
     @process = new proc.Process()
     @qmp     = new qmp.Qmp @name
-    delete @process
 
     vmConf.save @cfg
     @

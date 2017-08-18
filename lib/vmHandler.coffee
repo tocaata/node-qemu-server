@@ -180,7 +180,14 @@ module.exports.loadFiles = ->
     if vmCfg.settings.spice
       config.setToUsed 'spice', vmCfg.settings.spice
 
-    vms.push qemu.createVm vmCfg
+    obj = qemu.createVm vmCfg
+    vms.push obj
+    if vmCfg.settings.boot is true
+      obj.start ->
+        console.log "vm #{vmCfg.name} started"
+        cb {status:'success', msg:'vm created and started'}
+        socketServer.toAll 'set-vm-status', vmCfg.name, 'running'
+        obj.setStatus 'running'
     
   console.log "vms found in vmConfigs/"
   console.log  vms.length
