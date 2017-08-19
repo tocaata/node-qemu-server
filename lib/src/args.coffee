@@ -19,6 +19,10 @@ class Args
   nodefconfig: ->
     @pushArg '-nodefconfig'
     return this
+
+  usb: ->
+    @pushArg '-usb'
+    return this
   
   nodefaults: ->
     @pushArg '-nodefaults'
