@@ -23,6 +23,7 @@ module.exports.vmCfgToArgs = (cfg, cb = ->) ->
 
   args.nodefconfig()
       .nodefaults()
+      .usb()
 #       .noStart()
 #       .noShutdown()
   
@@ -31,7 +32,6 @@ module.exports.vmCfgToArgs = (cfg, cb = ->) ->
       .vga( cfg.hardware.vgaCard)
       .qmp( cfg.settings.qmpPort)
       .keyboard(cfg.settings.keyboard)
-      .usb()
 
 # Enable PCI passthrough
   for p in cfg.hardware.pci
