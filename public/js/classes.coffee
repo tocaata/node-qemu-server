@@ -46,6 +46,11 @@ class VmsViewModel
     @vms.sort (left, right) ->
       return left.name is right.name ? 0 : (left.name < right.name ? -1 : 1)
 
+  removeCallback: (vmNameIn) ->
+    i = @vms().findIndex (value, index, arr) ->
+      return value.name == vmNameIn
+    delete @vms.splice(i, 1)
+
   
   start: (vm) ->
     console.log "Start: #{vm.name}"
@@ -71,6 +76,10 @@ class VmsViewModel
     console.log "Edit: #{vm.name}"
     app.formCreateVMVM.editModel vm
     #app.socket.emit 'edit-vm', vm.name
+  remove: (vm) ->
+    console.log "Remove: #{vm.name}"
+    app.socket.emit 'remove-VM', vm.name
+    
 
   addHid: (vm) ->
     console.log "AddHID: #{vm.name}"
@@ -392,8 +401,7 @@ class FormCreateVMViewModel
       @cpuModel(vm.hardware.cpu)
 
     @selectedMemory(@memory.find((m) ->
-      m.num == vm.hardware.ram
-      ))
+      m.num == vm.hardware.ram ))
 
     @pciDevices(vm.hardware.pci)
     @otherOptions(vm.hardware.otherOptions)

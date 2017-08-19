@@ -17,5 +17,15 @@ open = (vmName, cb) ->
     console.dir e
     cb {status:'error', data:undefined}
 
-exports.save = save
-exports.open = open
+remove = (vmName) ->
+  try
+    fs.unlinkSync "vmConfigs/#{vmName}.json"
+  catch e
+    console.error "remove #{vmName} error"
+    return false
+  return true
+  
+
+exports.save   = save
+exports.open   = open
+exports.remove = remove

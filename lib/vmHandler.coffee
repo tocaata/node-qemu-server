@@ -84,6 +84,19 @@ module.exports.editVm = (vmCfg, cb) ->
 
   cb {status:'success', msg:'edited vm'}
 
+module.exports.removeVM = (vmName, cb) ->
+  i = vms.findIndex (value, index, arr) ->
+      return value.name == vmName
+  if i == null
+    cb status:'error', msg:"VM with the name '#{vmName}' is not exists"
+    return
+  vms[i].remove()
+  vms.splice(i, 1)
+  
+  socketServer.toAll 'remove-vm', vmName
+  cb {status:'success', msg:'remove vm'}
+
+
 ###
   NEW ISO
 ###  

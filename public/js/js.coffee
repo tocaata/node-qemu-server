@@ -35,6 +35,9 @@ app.hostVM         = hostVM
     vmsVM.update vm
     formCreateVMVM.createModel()
 
+  app.socket.on 'remove-vm', (vmName) ->
+    vmsVM.removeCallback vmName
+
   
   app.socket.on 'set-vm-status', (vmName, status) ->
     console.log "VM status #{vmName} #{status}"

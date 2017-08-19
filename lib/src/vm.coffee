@@ -17,6 +17,10 @@ class Vm
 
     vmConf.save @cfg
     @
+  remove: () ->
+    delete @qmp
+    delete @process
+    vmConf.remove @name
   
   setStatus: (status) ->
     @cfg.status = status

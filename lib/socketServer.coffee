@@ -62,6 +62,10 @@ module.exports.start = (httpServer) ->
         if ret.status is 'success'
           sock.emit 'reset-create-vm-form'
 
+    sock.on 'remove-VM', (vmName) ->
+      vmHandler.removeVM vmName, (ret) ->
+        sock.emit 'msg', ret
+
     sock.on 'edit-VM', (vmCfg) ->
       vmHandler.editVm vmCfg, (ret) ->
         sock.emit 'msg', ret
