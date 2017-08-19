@@ -82,9 +82,10 @@ class VmsViewModel
     
 
   addHid: (vm) ->
-    console.log "AddHID: #{vm.name}"
+    console.log "Add HID: #{vm.name}"
     app.socket.emit 'qmp-command', 'hid_attach', vm.name
   rmHid: (vm) ->
+    console.log "Remove HID: #{vm.name}"
     app.socket.emit 'qmp-command', 'hid_unattach', vm.name
   
   setStatus: (vmName, status) ->
