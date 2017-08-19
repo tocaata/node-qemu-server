@@ -4,5 +4,5 @@ sh ./cc
 rm -rf .git
 find . -name "*.coffee" -exec rm -rf {} \;
 content=`cat server.js`
-echo "#\!/usr/bin/node
+echo "#! /usr/bin/node
 $content" > server.js
