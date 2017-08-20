@@ -72,15 +72,15 @@ module.exports.editVm = (vmCfg, cb) ->
   if vmCfg.settings.spice
     vmCfg.settings.spice    = config.getFreeSPICEport()
 
-  Obj = curVm.edit(vmCfg)
+  curVm.edit(vmCfg)
   socketServer.toAll 'update-vm', vmCfg
 
   if vmCfg.settings.boot is true
-    obj.start ->
+    curVm.start ->
       console.log "vm #{vmCfg.name} started"
       cb {status:'success', msg:'vm created and started'}
       socketServer.toAll 'set-vm-status', vmCfg.name, 'running'
-      obj.setStatus 'running'
+      curVm.setStatus 'running'
 
   cb {status:'success', msg:'edited vm'}
 
@@ -198,7 +198,6 @@ module.exports.loadFiles = ->
     if vmCfg.settings.boot is true
       obj.start ->
         console.log "vm #{vmCfg.name} started"
-        cb {status:'success', msg:'vm created and started'}
         socketServer.toAll 'set-vm-status', vmCfg.name, 'running'
         obj.setStatus 'running'
     

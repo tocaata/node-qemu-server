@@ -123,7 +123,7 @@ class Qmp
     @sendCmd "device_add", {'driver':'usb-host', 'vendorid':'1133', 'productid':'49734'}, () ->
       @sendCmd "device_add", {'driver':'usb-host', 'vendorid':'6940', 'productid':'6919'}, cb
 
-  hid_unattach1: (cb) ->
+  hid_unattach: (cb) ->
     that = @
     tmp = new Promise((resolve, reject) ->
       that.sendCmd "qom-list", {'path':'/machine/unattached'}, (result) ->
@@ -144,14 +144,14 @@ class Qmp
     ).then((hids)->
       cur = null
       for hid in hids
-        if cur != null
+        if cur == null
           cur = new Promise((resolve, reject) ->
             that.sendCmd "device_del", hid, () ->
               resolve()
           )
         else
           cur = cur.then(() ->
-            tmp = new Promise((resolve, reject) ->
+            return tmp = new Promise((resolve, reject) ->
               that.sendCmd "device_del", hid, () ->
                 resolve()
             )
