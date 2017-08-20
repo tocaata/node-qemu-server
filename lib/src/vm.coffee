@@ -24,7 +24,7 @@ class Vm
   
   setStatus: (status) ->
     @cfg.status = status
-    vmConf.save @cfg
+    # vmConf.save @cfg
 
   start: (cb) ->
     @process.start @cfg
