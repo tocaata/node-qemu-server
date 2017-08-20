@@ -6,6 +6,6 @@ module.exports = (vm) ->
   console.log "qemu process exit VM #{vm.name}"
 
   vm.stopQMP()
-  vm.setStatus 'stopped'
+  # vm.setStatus 'stopped'
   socketServer.toAll 'set-vm-status', vm.name, 'stopped'
   socketServer.toAll 'msg', {type:'success', msg:"VM #{vm.name} shutdown."}

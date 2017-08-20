@@ -117,7 +117,6 @@
               </tr>
             </tbody>
           </table>
-
         </div>
         
         <!-- CREATE / LIST DISKS TAB -->        
@@ -151,7 +150,7 @@
                   <div class="progress">              
                     <div class="progress-bar" data-bind="style: {width: percentUsed}" ></div>
                   </div>
-<span data-bind="text: used()+'GiB of '+size()+'GiB used, left '+left()+'GiB'"></span>
+                  <span data-bind="text: used()+'GiB of '+size()+'GiB used, left '+left()+'GiB'"></span>
                 </td>                
                 <td><button data-bind="click: $root.remove" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-trash" /></button></td>
               </tr>
@@ -512,6 +511,7 @@
                               <li><a href="#" data-bind="click: selectOption.bind($data, '-netdev')">netdev</a></li>
                               <li><a href="#" data-bind="click: selectOption.bind($data, '-monitor')">monitor</a></li>
                               <li><a href="#" data-bind="click: selectOption.bind($data, '-kernel')">kernel</a></li>
+                              <li><a href="#" data-bind="click: selectOption.bind($data, '-set')">set</a></li>
                               <li><a href="#" data-bind="click: selectOption.bind($data, '-usb')">usb</a></li>
                             </ul>
                           </div>
