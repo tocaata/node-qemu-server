@@ -50,7 +50,6 @@ class VmsViewModel
     i = @vms().findIndex (value, index, arr) ->
       return value.name == vmNameIn
     delete @vms.splice(i, 1)
-
   
   start: (vm) ->
     console.log "Start: #{vm.name}"
@@ -72,6 +71,10 @@ class VmsViewModel
     console.log "Stop: #{vm.name}"
     app.socket.emit 'qmp-command', 'stop', vm.name
 
+  shutdown: (vm) ->
+    console.log "Shutdown: #{vm.name}"
+    app.socket.emit 'qmp-command', 'shutdown', vm.name
+
   edit: (vm) ->
     console.log "Edit: #{vm.name}"
     app.formCreateVMVM.editModel vm
@@ -79,14 +82,13 @@ class VmsViewModel
   remove: (vm) ->
     console.log "Remove: #{vm.name}"
     app.socket.emit 'remove-VM', vm.name
-    
 
   addHid: (vm) ->
     console.log "Add HID: #{vm.name}"
-    app.socket.emit 'qmp-command', 'hid_attach', vm.name
+    app.socket.emit 'attachHid', vm.name
   rmHid: (vm) ->
     console.log "Remove HID: #{vm.name}"
-    app.socket.emit 'qmp-command', 'hid_unattach', vm.name
+    app.socket.emit 'qmp-command', 'unattachHid', vm.name
   
   setStatus: (vmName, status) ->
     for vm in @vms()
@@ -388,7 +390,8 @@ class FormCreateVMViewModel
              bootDevice : @bootDevice()
              vnc        : @enableVNC()
              spice      : @enableSpice()
-             keyboard   : @keyboard() }}
+             keyboard   : @keyboard() }
+         , hid: false}
     return vm
 
   editModel:(vm) ->

@@ -119,11 +119,11 @@ class Qmp
   balloon: (mem, cb) ->
     @sendCmd 'balloon', {value:mem}, cb
 
-  hid_attach: (cb) ->
+  attachHid: (cb) ->
     @sendCmd "device_add", {'driver':'usb-host', 'vendorid':'1133', 'productid':'49734'}, () ->
       @sendCmd "device_add", {'driver':'usb-host', 'vendorid':'6940', 'productid':'6919'}, cb
 
-  hid_unattach: (cb) ->
+  unattachHid: (cb) ->
     that = @
     tmp = new Promise((resolve, reject) ->
       that.sendCmd "qom-list", {'path':'/machine/unattached'}, (result) ->
@@ -156,49 +156,7 @@ class Qmp
                 resolve()
             )
           )
+      cur.then(cb)
     )
-  
-
-  # hid_unattach: (cb) ->
-  #   paths = [{'path':'/machine/unattached'}, {'path':'/machine/peripheral-anon'}]
-  #   reduce_func = (result, arg) ->
-  #     hids = []
-  #     for r in result.data
-  #       if r.type == "child<usb-host>"
-  #         hids.push({'id':arg.path + r.name})
-
-  #   result_func = (data) ->
-  #     1
-  #   recur "qom-list", paths, reduce_func, result_func
-
-  #   @sendCmd "qom-list", {'path':'/machine/unattached'}, (result) ->
-  #     hids = []
-  #     for r in result.data
-  #       if r.type == "child<usb-host>"
-  #         hids.push({'id':"/machine/unattached/" + r.name})
-  #     @sendCmd "qom-list", {'path':'/machine/peripheral-anon'}, (result) ->
-  #       for r in result.data
-  #         if r.type == "child<usb-host>"
-  #           hids.push({'id':"/machine/peripheral-anon/" + r.name})
-  #       recur("device_del", hids)
-  #   cb()
-
-  # recur: (exec, argument_array, reduce_func, result_func) ->
-  #   if argument_array.length <= 0
-  #     return false
-  #   if typeof reduce_func is not 'function'
-  #     reduce_func = ->
-  #   if typeof result_func is not 'function'
-  #     result_func = ->
-  #   if argument_array.length == 1
-  #     arg = argument_array.pop()
-  #     @sendCmd exec, arg, (result) ->
-  #       results = reduce_func(result, arg)
-  #       result_func results
-  #   else
-  #     arg = argument_array.pop()
-  #     @sendCmd exec, arg, (result) ->
-  #       results = reduce_func(result, arg)
-  #       recur exec, argument_array, reduce_func.bind(results), result_func
 
 exports.Qmp = Qmp

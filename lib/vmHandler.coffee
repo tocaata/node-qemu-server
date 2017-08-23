@@ -7,10 +7,11 @@ host = require './src/host'
 
 config       = require './config'
 socketServer = require './socketServer'
+VmSet        = require('./vmset').VmSet
 
 isos  = []
 disks = []
-vms   = []
+vms   = new VmSet
 
 module.exports.createDisk = (disk, cb) ->
   Disk.create disk, (ret) ->
@@ -127,13 +128,19 @@ module.exports.qmpCommand = (qmpCmd, vmName, cb) ->
       vm[qmpCmd](->)
       return
   cb {type:'error', msg:'VM not available'}
-  
+
+module.exports.attachHid = (vmName, cb) ->
+  vms.attachHid vmName, (vm_un, vm) ->
+    cb()
+    if vm_un
+      socketServer.toAll 'update-vm', vm_un
+    if vm
+      socketServer.toAll 'update-vm', vm
 
 module.exports.stopQMP = (vmName) ->
   for vm in vms
     if vm.name is vmName
       vm.stopQMP()
-
 
 ###
   RETURN ISOS, DISKS, VMS

@@ -17,6 +17,7 @@ class Vm
 
     vmConf.save @cfg
     @
+
   remove: () ->
     delete @qmp
     delete @process
@@ -24,7 +25,7 @@ class Vm
   
   setStatus: (status) ->
     @cfg.status = status
-    # vmConf.save @cfg
+    vmConf.save @cfg
 
   start: (cb) ->
     @process.start @cfg
@@ -63,11 +64,17 @@ class Vm
   status: ->
     @qmp.status()
 
-  hid_attach: (cb) ->
-    @qmp.hid_attach cb
+  attachHid: (cb) ->
+    that = @
+    @qmp.attachHid () ->
+      cb()
+      that.cfg.hid = true
 
-  hid_unattach: (cb) ->
-    @qmp.hid_unattach cb
+  unattachHid: (cb) ->
+    that = @
+    @qmp.unattachHid () ->
+      cb()
+      that.cfg.hid = false
 
 exports.Vm = Vm
   

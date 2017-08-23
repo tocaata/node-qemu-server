@@ -6,6 +6,7 @@
     
     <link href="/vendor/css/bootstrap-3-0-0.css" rel="stylesheet">
     <link href="/vendor/css/type.css" rel="stylesheet">
+    <link href="/vendor/css/font-awesome.min.css" rel="stylesheet">
 
     <script type="text/javascript" rel="anonymous" src="/vendor/jsLibs/jquery-2-0-3.js"></script>
     <script type="text/javascript" rel="anonymous" src="/vendor/jsLibs/typeahead-0-9-3.js"></script>
@@ -90,22 +91,23 @@
                 <td data-bind="text: false != hardware.disk ? hardware.disk : hardware.partition "></td>
                 <td style="cursor:pointer;" data-bind="text: hardware.iso == false ? 'none' : hardware.iso, click: $parent.expandIso"</td>
                 <td>
-                  <button data-bind="click: $root.edit, visible: status() == 'stopped'" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-cog" /></button>
-                  <button data-bind="click: $root.addHid" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-link" /></button>
-                  <button data-bind="click: $root.rmHid" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eject" /></button>
+                  <button data-bind="click: $root.edit, visible: status() == 'stopped'" class="btn btn-default btn-sm"><i class="fa fa-edit"></i></button>
+                  <button data-bind="click: $root.addHid, visible: !hid" class="btn btn-default btn-sm"><i class="fa fa-usb"></i></button>
+                  <button data-bind="click: $root.rmHid, visible: hid" class="btn btn-default btn-sm"><i class="fa fa-eject"></i></button>
                 </td>
-                <td><button data-bind="click: $root.remove, visible: status() == 'stopped'" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-trash" /></button></td>
+                <td><button data-bind="click: $root.remove, visible: status() == 'stopped'" class="btn btn-default btn-sm"><i class="fa fa-trash-o"></i></button></td>
               </tr>
 
               <tr data-bind="visible: expandedStatus">
                 <td>
                 </td>
                 <td colspan="9">
-                  <button data-bind="click: $root.start, visible: status() == 'stopped' "  class="btn btn-default btn-sm"><span class="glyphicon glyphicon-off" /></button>
-                  <button data-bind="click: $root.pause, visible: status() != 'stopped' && status() != 'paused'" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-pause" /></button>
-                  <button data-bind="click: $root.resume, visible: status() != 'stopped' && status() != 'running'" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-play" /></button>
-                  <button data-bind="click: $root.stop, visible: status() != 'stopped'" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-stop" /></button>
-                  <button data-bind="click: $root.reset, visible: status() != 'stopped'" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-repeat" /></button>
+                  <button data-bind="click: $root.start, visible: status() == 'stopped' "  class="btn btn-default btn-sm"><i class="fa fa-power-off"></i></button>
+                  <button data-bind="click: $root.pause, visible: status() != 'stopped' && status() != 'paused'" class="btn btn-default btn-sm"><i class="fa fa-pause"></i></button>
+                  <button data-bind="click: $root.resume, visible: status() != 'stopped' && status() != 'running'" class="btn btn-default btn-sm"><i class="fa fa-play"></i></button>
+                  <button data-bind="click: $root.stop, visible: status() != 'stopped'" class="btn btn-default btn-sm"><i class="fa fa-stop"></i></button>
+                  <button data-bind="click: $root.reset, visible: status() != 'stopped'" class="btn btn-default btn-sm"><i class="fa fa-repeat"></i></button>
+                  <button data-bind="click: $root.shutdown, visible: status() == 'running'"  class="btn btn-default btn-sm"><i class="fa fa-power-off"></i></button>
                 </td>
               </tr>
               <tr data-bind="visible: expandedIso() && hardware.iso != false">
@@ -336,7 +338,7 @@
                         <span class="help-block">Passthrough PCI device as GPU card.</span>
                       </div>
                       <div class="col-md-offset-2 col-md-8">
-                        <button class="btn btn-default" data-bind="click: addPci">Add PCI</button>
+                        <button class="btn btn-default" data-bind="click: addPci"><i class="fa fa-plus"></i></button>
                       </div>
                     </div>
                   </div>
@@ -350,14 +352,14 @@
 
                   <div class="form-group for-edit">
                     <div class="col-md-offset-2 col-md-8">
-                      <button data-bind="click: edit" class="btn btn-primary">save</button>
+                      <button data-bind="click: edit" class="btn btn-primary"><i class="fa fa-save" style="padding-right:13px"></i><span>save</span></button>
                       <span class="help-block">Edit this VM with selected settings.</span>
                     </div>
                   </div>
 
                   <div class="form-group for-edit">
                     <div class="col-md-offset-2 col-md-8">
-                      <button data-bind="click: createModel" class="btn btn-primary">cancel</button>
+                      <button data-bind="click: createModel" class="btn btn-primary"><i class="fa fa-close" style="padding-right:4px"></i>cancel</button>
                       <span class="help-block">Cancel this edit.</span>
                     </div>
                   </div>
@@ -522,7 +524,7 @@
                     </div>
                     <div class="form-group">
                       <div class="col-md-offset-2 col-md-8">
-                        <button class="btn btn-default" data-bind="click: addOption">Add</button>
+                        <button class="btn btn-default" data-bind="click: addOption"><i class="fa fa-plus"></i></button>
                       </div>
                     </div>
                   </div>
@@ -531,7 +533,7 @@
                     <div class="form-group">
                       <div class="col-md-offset-2 col-md-8">
                         <label>
-                          <button type="checkbox" data-bind="click: seeArg" class="btn btn-default">See</button>
+                          <button type="checkbox" data-bind="click: seeArg" class="btn btn-default"><i class="fa fa-eye"></i></button>
                           See Qemu command line.
                         </label>
                         <span class="help-block">See Qemu command line</span>
