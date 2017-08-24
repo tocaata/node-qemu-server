@@ -88,7 +88,7 @@ class VmsViewModel
     app.socket.emit 'attachHid', vm.name
   rmHid: (vm) ->
     console.log "Remove HID: #{vm.name}"
-    app.socket.emit 'qmp-command', 'unattachHid', vm.name
+    app.socket.emit 'unattachHid', vm.name
   
   setStatus: (vmName, status) ->
     for vm in @vms()

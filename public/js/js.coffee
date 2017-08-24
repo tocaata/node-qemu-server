@@ -31,7 +31,7 @@ app.hostVM         = hostVM
       formCreateVMVM.deleteDisk vm.hardware.disk
 
   app.socket.on 'update-vm', (vm) ->
-    # console.dir vm
+    console.log "update-vm"
     vmsVM.update vm
     formCreateVMVM.createModel()
 

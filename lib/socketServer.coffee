@@ -37,6 +37,10 @@ module.exports.start = (httpServer) ->
       vmHandler.attachHid vmName, () ->
         console.log "AddHid #{vmName}"
 
+    sock.on 'unattachHid', (vmName) ->
+      vmHandler.unattachHid vmName, () ->
+        console.log "Remove Hid #{vmName}"
+
     sock.on 'create-disk', (disk) ->
       vmHandler.createDisk disk, (ret) ->
         sock.emit 'msg', ret

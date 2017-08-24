@@ -52,21 +52,21 @@ class Qmp
               if vmHandler[event]?
                 console.log "QMP: call vmHandler[#{event}] for VM #{@vmName}"
                 vmHandler[event] @vmName
-            
             if @dataCb?
+              callback = @dataCb
+              @dataCb = undefined
               if parsedData.error?
-                @dataCb 'error':parsedData.error
+                callback 'error':parsedData.error
               else if parsedData.timestamp?
                 continue
               else if parsedData.return?
                 if 0 is Object.keys(parsedData.return).length
-                  @dataCb status:'success'
+                  callback status:'success'
                 else
-                  @dataCb 'data':parsedData.return
+                  callback 'data':parsedData.return
               else
                 console.error "cant process Data"
                 console.error parsedData
-              @dataCb = undefined
             else
 #               console.log "no callback defined:"
 #               console.dir parsedData
@@ -120,8 +120,10 @@ class Qmp
     @sendCmd 'balloon', {value:mem}, cb
 
   attachHid: (cb) ->
-    @sendCmd "device_add", {'driver':'usb-host', 'vendorid':'1133', 'productid':'49734'}, () ->
-      @sendCmd "device_add", {'driver':'usb-host', 'vendorid':'6940', 'productid':'6919'}, cb
+    that = @
+    that.sendCmd "device_add", {'driver':'usb-host', 'vendorid':'1133', 'productid':'49734'}, (result) ->
+      that.sendCmd "device_add", {'driver':'usb-host', 'vendorid':'6940', 'productid':'6919'}, (result1) ->
+        cb()
 
   unattachHid: (cb) ->
     that = @

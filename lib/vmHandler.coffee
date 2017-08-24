@@ -7,13 +7,10 @@ host = require './src/host'
 
 config       = require './config'
 socketServer = require './socketServer'
-VmSet        = require('./vmset').VmSet
 
 isos  = []
 disks = []
-vms   = new VmSet
-console.dir vms
-console.log vms.attachHid
+vms   = []
 
 module.exports.createDisk = (disk, cb) ->
   Disk.create disk, (ret) ->
@@ -132,14 +129,32 @@ module.exports.qmpCommand = (qmpCmd, vmName, cb) ->
   cb {type:'error', msg:'VM not available'}
 
 module.exports.attachHid = (vmName, cb) ->
-  console.log vms.attachHid
-  console.dir vms
-  vms.attachHid vmName, (vm_un, vm) ->
+  curVm = null
+  for v in vms
+    if v.name == vmName
+      curVm = v
+  if curVm == null
+    cb {type:'error', msg:'VM not available'}
+  for vm in vms
+    if vm.cfg.hid
+      vm.unattachHid (ret) ->
+        curVm.attachHid ->
+          cb()
+          socketServer.toAll 'update-vm', vm.cfg
+          socketServer.toAll 'update-vm', curVm.cfg
+      return
+  curVm.attachHid ->
     cb()
-    if vm_un
-      socketServer.toAll 'update-vm', vm_un
-    if vm
-      socketServer.toAll 'update-vm', vm
+    socketServer.toAll 'update-vm', curVm.cfg
+ 
+module.exports.unattachHid = (vmName, cb) ->
+  for vm in vms
+    if vm.name is vmName
+      vm.unattachHid (ret) ->
+        cb(ret)
+        socketServer.toAll 'update-vm', vm.cfg
+      return
+  cb {type:'error', msg:'VM not available'}
 
 module.exports.stopQMP = (vmName) ->
   for vm in vms
