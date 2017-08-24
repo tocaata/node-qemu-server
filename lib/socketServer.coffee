@@ -33,6 +33,10 @@ module.exports.start = (httpServer) ->
       console.log "QMP-Command #{qmpCmd}"
       vmHandler.qmpCommand qmpCmd, vmName
 
+    sock.on 'attachHid', (vmName) ->
+      vmHandler.attachHid vmName, () ->
+        console.log "AddHid #{vmName}"
+
     sock.on 'create-disk', (disk) ->
       vmHandler.createDisk disk, (ret) ->
         sock.emit 'msg', ret

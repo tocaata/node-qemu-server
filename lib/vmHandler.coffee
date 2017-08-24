@@ -12,6 +12,8 @@ VmSet        = require('./vmset').VmSet
 isos  = []
 disks = []
 vms   = new VmSet
+console.dir vms
+console.log vms.attachHid
 
 module.exports.createDisk = (disk, cb) ->
   Disk.create disk, (ret) ->
@@ -130,6 +132,8 @@ module.exports.qmpCommand = (qmpCmd, vmName, cb) ->
   cb {type:'error', msg:'VM not available'}
 
 module.exports.attachHid = (vmName, cb) ->
+  console.log vms.attachHid
+  console.dir vms
   vms.attachHid vmName, (vm_un, vm) ->
     cb()
     if vm_un
