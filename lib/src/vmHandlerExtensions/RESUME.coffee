@@ -7,3 +7,6 @@ module.exports = (vm) ->
   vm.setStatus 'running'
   socketServer.toAll 'set-vm-status', vm.name, 'running'
   socketServer.toAll 'msg', {type:'success', msg:"VM #{vm.name} resume."}
+  if vm.cfg.hid
+    vm.attachHid ->
+      socketServer.toAll 'update-vm', curVm.cfg

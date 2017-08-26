@@ -7,7 +7,6 @@ class Vm
     @name    = @cfg.name
     @process = new proc.Process()
     @qmp     = new qmp.Qmp @name
-    @cfg.hid = false
     vmConf.save @cfg
   edit: (@cfg) ->
     delete @qmp
@@ -66,6 +65,11 @@ class Vm
 
   attachHid: (cb) ->
     that = @
+    if @cfg.status == 'stopped'
+      @cfg.hid = true
+      vmConf.save @cfg
+      cb()
+      return
     @qmp.attachHid ->
       that.cfg.hid = true
       vmConf.save that.cfg
@@ -73,10 +77,14 @@ class Vm
 
   unattachHid: (cb) ->
     that = @
-    @qmp.unattachHid () ->
+    if @cfg.status == 'stopped'
+      @cfg.hid = false
+      vmConf.save @cfg
+      return cb()
+    @qmp.unattachHid (ret) ->
       that.cfg.hid = false
       vmConf.save that.cfg
-      cb()
+      cb(ret)
 
 exports.Vm = Vm
   

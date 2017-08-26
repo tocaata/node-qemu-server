@@ -54,12 +54,13 @@ class Qmp
                 vmHandler[event] @vmName
             if @dataCb?
               callback = @dataCb
-              @dataCb = undefined
               if parsedData.error?
+                @dataCb = undefined
                 callback 'error':parsedData.error
               else if parsedData.timestamp?
                 continue
               else if parsedData.return?
+                @dataCb = undefined
                 if 0 is Object.keys(parsedData.return).length
                   callback status:'success'
                 else
@@ -144,21 +145,13 @@ class Qmp
           resolve(hids)
       )
     ).then((hids)->
-      cur = null
+      fun = cb
+      getFun = (hid, callback) ->
+        () ->
+          that.sendCmd "device_del", hid, callback
       for hid in hids
-        if cur == null
-          cur = new Promise((resolve, reject) ->
-            that.sendCmd "device_del", hid, () ->
-              resolve()
-          )
-        else
-          cur = cur.then(() ->
-            return tmp = new Promise((resolve, reject) ->
-              that.sendCmd "device_del", hid, () ->
-                resolve()
-            )
-          )
-      cur.then(cb)
+        fun = getFun(hid, fun)
+     fun()
     )
 
 exports.Qmp = Qmp
