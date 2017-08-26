@@ -151,7 +151,7 @@ class Qmp
           that.sendCmd "device_del", hid, callback
       for hid in hids
         fun = getFun(hid, fun)
-     fun()
+      fun()
     )
 
 exports.Qmp = Qmp

@@ -9,4 +9,4 @@ module.exports = (vm) ->
   socketServer.toAll 'msg', {type:'success', msg:"VM #{vm.name} resume."}
   if vm.cfg.hid
     vm.attachHid ->
-      socketServer.toAll 'update-vm', curVm.cfg
+      socketServer.toAll 'update-vm', vm.cfg
