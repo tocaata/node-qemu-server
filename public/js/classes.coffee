@@ -234,13 +234,17 @@ class FormCreateVMViewModel
                   
 
     @cpus      = []
-    @cpus.push {num:i, cpu:"#{i} cpus"} for i in [1..48]
+    @cpus.push {num:i, cpu:"#{i} cpus"} for i in [1..10]
+
+    @cores     = []
+    @cores.push {num:i, core:"#{i} cores"} for i in [1..12]
 
 
     @memory = []
     @memory.push {num:i*256, mem:"#{i*256} MiByte"} for i in [1..128]
 
     @cpuCount       = ko.observable()
+    @coreCount      = ko.observable()
     @enableCpuModel = ko.observable()
     @cpuModel       = ko.observable()
 
@@ -374,6 +378,7 @@ class FormCreateVMViewModel
          , hardware: {
              arch         : @selectedArch()
              cpus         : @cpuCount().num
+             cores        : @coreCount().num
              cpu          : if @enableCpuModel() then @cpuModel() else false
              ram          : @selectedMemory().num
              disk         : if @diskOrPartition() is 'disk'      then @disk()      else false
@@ -400,12 +405,20 @@ class FormCreateVMViewModel
     @cpuCount(@cpus.find((c) -> 
       c.num == vm.hardware.cpus
       ))
+    @coreCount(@cores.find((c) -> 
+      c.num == vm.hardware.cores
+      ))
     if vm.hardware.cpu
       @enableCpuModel(true)
       @cpuModel(vm.hardware.cpu)
 
     @selectedMemory(@memory.find((m) ->
       m.num == vm.hardware.ram ))
+
+    if vm.hardware.disk
+      @disk(vm.hardware.disk)
+    else if vm.hardware.partition
+      @partition(vm.hardware.partition)
 
     @pciDevices(vm.hardware.pci)
     @otherOptions(vm.hardware.otherOptions)

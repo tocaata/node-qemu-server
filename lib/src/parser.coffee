@@ -27,7 +27,7 @@ module.exports.vmCfgToArgs = (cfg, cb = ->) ->
 #       .noStart()
 #       .noShutdown()
   
-  args.cpus(cfg.hardware.cpus)
+  args.cpus(cfg.hardware.cpus, cfg.hardware.cores)
       .ram( cfg.hardware.ram)
       .vga( cfg.hardware.vgaCard)
       .qmp( cfg.settings.qmpPort)

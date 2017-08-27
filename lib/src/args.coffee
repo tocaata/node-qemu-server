@@ -60,8 +60,8 @@ class Args
     @pushArg '-m', ram
     return this
   
-  cpus: (n) ->
-    @pushArg '-smp', n
+  cpus: (n, core) ->
+    @pushArg '-smp', "#{n},cores=#{core}"
     return this
 
   arch: (arch, accel=null) ->
