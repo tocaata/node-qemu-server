@@ -60,8 +60,8 @@ class Args
     @pushArg '-m', ram
     return this
   
-  cpus: (n, core) ->
-    @pushArg '-smp', "#{n},cores=#{core}"
+  cpus: (n) ->
+    @pushArg '-smp', "cores=#{Math.ceil(n/2)},sockets=1,threads=2"
     return this
 
   arch: (arch, accel=null) ->
