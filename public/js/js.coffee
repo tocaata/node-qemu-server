@@ -1,13 +1,17 @@
-
-imagesVM       = new app.c.ImageViewModel()
 formCreateVMVM = new app.c.FormCreateVMViewModel()
+imagesVM       = new app.c.ImageViewModel()
 isosVM         = new app.c.IsosViewModel()
 vmsVM          = new app.c.VmsViewModel()
 hostVM         = new app.c.HostViewModel()
+config         = new app.c.Config()
 
 app.formCreateVMVM = formCreateVMVM
 app.vmsVM          = vmsVM
 app.hostVM         = hostVM
+app.config         = config
+
+
+
 
 ($ document).ready ->
   console.log "DOC -> ready"
@@ -22,6 +26,9 @@ app.hostVM         = hostVM
   app.socket.on 'set-host', (host) ->
     hostVM.set host
 
+  app.socket.on 'update-config', (setting) ->
+    formCreateVMVM.updateSystemConfigCB setting
+    ko.applyBindings formCreateVMVM, ($ 'FORM#formVMcreate').get 0
 
   app.socket.on 'set-vm', (vm) ->
     console.dir vm
@@ -85,7 +92,7 @@ app.hostVM         = hostVM
   hostVM.set {hostname:'-', cpus:0, ram:0, freeRam:0, l:[0,0,0]}
 
   ko.applyBindings imagesVM,       ($ 'TBODY#imagesList').get  0
-  ko.applyBindings formCreateVMVM, ($ 'FORM#formVMcreate').get 0
+  # ko.applyBindings formCreateVMVM, ($ 'FORM#formVMcreate').get 0
   ko.applyBindings isosVM,         ($ 'TBODY#isosList').get    0
   ko.applyBindings vmsVM,          ($ 'TBODY#vmList').get      0
   ko.applyBindings hostVM,         ($ 'TBODY#hostTable').get   0

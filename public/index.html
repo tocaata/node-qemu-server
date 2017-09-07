@@ -210,19 +210,9 @@
                   <div class="section section-color">
                     <div class="form-group">
                       <label for="netCard"  class="col-md-2 control-label">disk or partition</label>
-                      <div class="col-md-8">
-                        <div class="radio">
-                          <label>
-                            <input type="radio" name="diskOrPartition" value="disk" data-bind="checked: diskOrPartition" />
-                            Disk
-                          </label>
-                        </div>
-
-                        <div class="radio">
-                          <label>
-                            <input type="radio" name="diskOrPartition" value="partition" data-bind="checked: diskOrPartition" />
-                            Partition
-                          </label>
+                      <div class="col-md-2">
+                        <div class="select">
+                          <select data-bind="options: diskTypes, value: diskOrPartition" class="form-control" id="diskOrPartition"></select>
                         </div>
                       </div>
                     </div>

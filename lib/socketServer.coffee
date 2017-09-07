@@ -3,6 +3,7 @@ vmHandler = require './vmHandler'
 ioServer  = undefined
 Disk      = require './src/disk'
 parser    = require './src/parser'
+settings  = require('./src/settings').settings
 
 socks  = {}
 
@@ -20,6 +21,8 @@ module.exports.start = (httpServer) ->
     for disk in vmHandler.getDisks()                                            # emit disks, client drops duplicates
       Disk.info disk, (ret) ->
         sock.emit 'set-disk', ret.data
+
+    sock.emit('update-config', settings)
     
     sock.emit('set-vm', vm.cfg) for vm in vmHandler.getVms()                    # emit vms, client drops duplicates
     

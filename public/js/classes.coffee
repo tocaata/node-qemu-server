@@ -180,6 +180,7 @@ class FormCreateVMViewModel
     @disks = ko.observableArray()
     @isos  = ko.observableArray ['none'] # ['debian', 'ubuntu' ]
     
+    @diskTypes   = ['disk',  'partition']
     @bootDevices = ['disk',        'iso']
     @availablePciDevices  = ['02:00.0', '02:00.1', '03:00.0', '03:00.1']
     @netCards    = ['virtio', 'rtl8139', 'e1000']
@@ -234,14 +235,10 @@ class FormCreateVMViewModel
                   
 
     @cpus      = []
-    @cpus.push {num:i, cpu:"#{i} cpus"} for i in [1..10]
-
-    @cores     = []
-    @cores.push {num:i, core:"#{i} cores"} for i in [1..12]
-
+    @cpus.push {num:i, cpu:"#{i * 2} cpus"} for i in [1..12]
 
     @memory = []
-    @memory.push {num:i*256, mem:"#{i*256} MiByte"} for i in [1..128]
+    @memory.push {num:i*256, mem:"#{i*256} MiByte"} for i in [1..24]
 
     @cpuCount       = ko.observable()
     @enableCpuModel = ko.observable()
@@ -295,6 +292,12 @@ class FormCreateVMViewModel
 
     @removeOption = (option) ->
       that.otherOptions.remove(option)
+
+  updateSystemConfigCB: (settings) ->
+    @cpus = []
+    @cpus.push {num:i, cpu:"#{i * 2} cpus"} for i in [1..(settings.cores/2)]
+    @memory = []
+    @memory.push {num:i*256, mem:"#{i*256} MiByte"} for i in [1..((settings.totalmem/1024/1024/256).toFixed())]
 
   addPci: ->
     @pciDevices.push(new PciLine(@pciDevice(), @multFunction(), @xvga()))
@@ -464,6 +467,15 @@ class FormCreateVMViewModel
     console.log mac
     console.log @macAddr()
 
+class Config
+  constructor: ->
+    @cores     = 12
+    @totalmem  = 12
+
+  updateCb: (cf) ->
+    console.dir cf
+    @cores     = cf.cores
+    @totalmem  = cf.totalmem
 
 app.c.ImageModel            = ImageModel
 app.c.ImageViewModel        = ImageViewModel
@@ -471,3 +483,4 @@ app.c.FormCreateVMViewModel = FormCreateVMViewModel
 app.c.IsosViewModel         = IsosViewModel
 app.c.VmsViewModel          = VmsViewModel
 app.c.HostViewModel         = HostViewModel
+app.c.Config                = Config
