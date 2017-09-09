@@ -235,7 +235,7 @@ class FormCreateVMViewModel
                   
 
     @cpus      = []
-    @cpus.push {num:i, cpu:"#{i * 2} cpus"} for i in [1..12]
+    @cpus.push {num:i * 2, cpu:"#{i * 2} cpus"} for i in [1..12]
 
     @memory = []
     @memory.push {num:i*256, mem:"#{i*256} MiByte"} for i in [1..24]
@@ -295,7 +295,7 @@ class FormCreateVMViewModel
 
   updateSystemConfigCB: (settings) ->
     @cpus = []
-    @cpus.push {num:i, cpu:"#{i * 2} cpus"} for i in [1..(settings.cores/2)]
+    @cpus.push {num:i * 2, cpu:"#{i * 2} cpus"} for i in [1..(settings.cores/2)]
     @memory = []
     @memory.push {num:i*256, mem:"#{i*256} MiByte"} for i in [1..((settings.totalmem/1024/1024/256).toFixed())]
 
@@ -412,11 +412,11 @@ class FormCreateVMViewModel
 
     @selectedMemory(@memory.find((m) ->
       m.num == vm.hardware.ram ))
-
-    if vm.hardware.disk
+    
+    if vm.hardware.disk != false
       @diskOrPartition('disk')
       @disk(vm.hardware.disk)
-    else if vm.hardware.partition
+    else if vm.hardware.partition != false
       @diskOrPartition('partition')
       @partition(vm.hardware.partition)
 
