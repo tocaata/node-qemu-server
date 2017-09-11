@@ -1,8 +1,43 @@
 node-qemu-server
 ================
+node-qemu-server lets you control virtual machines in your webbrowser.
 
-## Check out the working branch feature/new-guest-creation
+### Requirements
 
+#### Linux
+* LSB Linux x86_64 (tested with Debian (Sid) GNU/Linux)
+* qemu-system-x86 v1.6.1
+* nodejs v0.10.21
+* npm
+* packages: {numactl, usbutils} (usb and numa are only available on Linux)
+
+#### OS X
+* v10.8 / v10.9 x86_64 
+* macports qemu v1.6.1
+
+### Installation
+Install node-qemu-server on Debian GNU/Linux and OS X (assume you have installed qemu, node, npm and numactl)
+
+    $ git clone https://github.com/baslr/node-qemu-server
+    $ cd node-qemu-server
+    $ npm install
+    $ git submodule init
+    $ git submodule update
+    $ cd public/vendor/
+    $ bower install
+    $ cd ../../
+    $ ./cc
+    $ node server
+    
+Now open your HTML5 Webbrowser and open http://127.0.0.1:4224
+
+![gui_host](https://raw.github.com/baslr/node-qemu-server/feature/new-guest-creation/doc/host.png)
+![gui_guests](https://raw.github.com/baslr/node-qemu-server/feature/new-guest-creation/doc/guests.png)
+![gui_disks](https://raw.github.com/baslr/node-qemu-server/feature/new-guest-creation/doc/disks.png)
+![gui_isos](https://raw.github.com/baslr/node-qemu-server/feature/new-guest-creation/doc/isos.png)
+![guest_creation](https://raw.github.com/baslr/node-qemu-server/feature/new-guest-creation/doc/guest_creation.png)
+
+---
 setup and control qemu instances with Node.js
 
 more to come in the future
@@ -21,12 +56,12 @@ node-qemu command | qmp command
 qVm.pause()    | {"name": "stop"}
 qVm.reset()    | {"name": "system_reset"}
 qVm.resume()   | {"name": "cont"}
-qVm.shutdown() | {"name": "system_powerdown"} 
-qVm.stop()     | {"name": "quit"}     
-        
+qVm.shutdown() | {"name": "system_powerdown"}
+qVm.stop()     | {"name": "quit"}
+qVm.status()   | {"name": "query-status"}
 
 
-	# in work
+  # in work
           {"name": "qom-list-types"}
           {"name": "change-vnc-password"}
           {"name": "qom-get"}
@@ -40,7 +75,6 @@ qVm.stop()     | {"name": "quit"}
           {"name": "query-spice"}
           {"name": "query-vnc"}
           {"name": "query-mice"}
-          {"name": "query-status"}
           {"name": "query-kvm"}
           {"name": "query-pci"}
           {"name": "query-cpus"}
@@ -86,31 +120,3 @@ qVm.stop()     | {"name": "quit"}
           {"name": "change"}
           {"name": "eject"}
 
-### example
-    qVm = new new QemuVm 'my-name'
-
-    qVm.gfx()             # no gfx
-    qVm.ram(2048)	      # 2 GiByte ram
-    qVm.cpus(4)		      # 4 cpus
-    qVm.hd('myImage.img') # img file
-    qVm.vnc(2)			  # vnc on port 5902
-    qVm.qmp(4442)		  # qmp port
-    
-    qVm.start ->
-      # do something
-      
-### vm config
-    name: string                                         # string
-      hardware:
-        ram  : uint
-        cpus : uint
-        hds  : []{name:strings,size:uint},string         # if hd not existence create, with size
-        isos : []strings
-        mac  : '11:22:33:44:55:66'
-  
-      settings:
-        qmpPort  : uint                                  # not exposed to user
-        keyboard : string
-        vnc      : unit                                  # vnc port, port = vncPort + 5900
-        bootOnce : true xor false
-        boot     : true xor false
