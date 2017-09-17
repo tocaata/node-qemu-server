@@ -1,5 +1,6 @@
 
 net       = require 'net'
+util      = require 'util'
 vmHandler = require '../vmHandler'
 
 class Qmp
@@ -34,7 +35,8 @@ class Qmp
             if parsedData.event? then event = parsedData.event else event = undefined
 
             console.log " - - - QMP-START-DATA - - -"
-            console.dir  parsedData
+            #console.dir  parsedData
+            console.log   util.inspect(parsedData).slice(0, 256)
             console.log " - - - QMP-END-DATA - - -"
 
             if parsedData.return?.status?     and
