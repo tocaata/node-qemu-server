@@ -9,6 +9,9 @@ class HostViewModel
     host.ram     = "#{(host.ram/1024/1024).toFixed 3} MiB"
     @host host
 
+  action: (act) ->
+    app.socket.emit 'host-action', act
+
 class VmsViewModel
   constructor: ->
     @vms = ko.observableArray()

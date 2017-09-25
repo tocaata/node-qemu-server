@@ -45,6 +45,7 @@
                 <th>load now</th>
                 <th>load 5min ago</th>
                 <th>load 15min ago</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody id="hostTable">
@@ -56,6 +57,9 @@
                 <th data-bind="text: host().l[0]"></th>
                 <th data-bind="text: host().l[1]"></th>
                 <th data-bind="text: host().l[2]"></th>
+                <td><button class="btn btn-default btn-sm" title="Shutdown after all VMs are shutdown" data-bind="click: action.bind($data, 'shutdown'), enable: host().waitForShutdown == false">
+                  <i class="fa fa-power-off"></i></button>
+                </td>
               </tr>
             </tbody>
           </table>

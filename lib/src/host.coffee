@@ -1,7 +1,7 @@
 
 os = require 'os'
 
-host = {hostname:'', cpus:0, ram:'', freeRam:'', load:[]}
+host = {hostname:'', cpus:0, ram:'', freeRam:'', load:[], waitForShutdown: false}
 
 host.hostname = os.hostname()
 host.cpus     = os.cpus().length

@@ -25,6 +25,8 @@ module.exports.start = (httpServer) ->
     sock.emit('update-config', settings)
     
     sock.emit('set-vm', vm.cfg) for vm in vmHandler.getVms()                    # emit vms, client drops duplicates
+
+    sock.emit('set-host', vmHandler.getHost())
     
     #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   #
   
@@ -50,6 +52,11 @@ module.exports.start = (httpServer) ->
         if ret.status is 'success'
           sock.emit 'reset-create-disk-form'
           ioServer.sockets.emit 'set-disk', ret.data.data
+
+    sock.on 'host-action', (act) ->
+      if act == "shutdown"
+        vmHandler.shutdownHost (ret) ->
+          sock.emit 'msg', ret
 
 
     sock.on 'delete-disk', (diskName) ->

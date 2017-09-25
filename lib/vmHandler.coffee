@@ -1,4 +1,5 @@
 fs   = require 'fs'
+proc = require 'child_process'
 qemu = require './qemu'
 
 Disk = require './src/disk'
@@ -11,6 +12,24 @@ socketServer = require './socketServer'
 isos  = []
 disks = []
 vms   = []
+
+module.exports.tryShutdownHost = tryShutdownHost = (cb)->
+  hst = host()
+  if hst.waitForShutdown
+    for vm in vms
+      console.dir vm
+      if vm.cfg.status != 'stopped'
+        cb {status: 'success', msg:'wait for shutdown'}
+        return
+    proc.exec "shutdown"
+    console.log "shutdown host"
+    cb {status: 'success', msg:'shutdown now'}
+
+module.exports.shutdownHost = (cb) ->
+  host().waitForShutdown = true
+  tryShutdownHost cb
+  socketServer.toAll 'set-host', host()
+
 
 module.exports.createDisk = (disk, cb) ->
   Disk.create disk, (ret) ->
@@ -167,6 +186,7 @@ module.exports.stopQMP = (vmName) ->
 module.exports.getIsos  = -> return isos
 module.exports.getDisks = -> return disks
 module.exports.getVms   = -> return vms
+module.exports.getHost  = -> return host()
 
 
 ###
