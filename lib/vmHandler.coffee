@@ -17,7 +17,6 @@ module.exports.tryShutdownHost = tryShutdownHost = (cb)->
   hst = host()
   if hst.waitForShutdown
     for vm in vms
-      console.dir vm
       if vm.cfg.status != 'stopped'
         cb {status: 'success', msg:'wait for shutdown'}
         return

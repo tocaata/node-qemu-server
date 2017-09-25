@@ -1,6 +1,6 @@
 
 socketServer = require '../../socketServer'
-vmHandler    = require '../vmHandler'
+vmHandler    = require '../../vmHandler'
 
 module.exports = (vm) ->
   console.log "vmHandler Extension received SHUTDOWN event"
