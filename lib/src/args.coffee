@@ -47,11 +47,11 @@ class Args
       args += 'once='
     
     if      type is 'hd'
-      args = "#{args}c"
+      args = "#{args}c,menu=on"
     else if type is 'cd'
-      args = "#{args}d"
+      args = "#{args}d,menu=on"
     else if type is 'net'
-      args = "#{args}n"
+      args = "#{args}n,menu=on"
     
     @pushArg '-boot', args
     return this

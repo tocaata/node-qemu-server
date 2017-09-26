@@ -21,6 +21,7 @@ class Process
         if code is 0 then console.log   "QEMU-Process: exit clean."
         else              console.error "QEMU-Process: exit with error: #{code}, signal: #{signal}"
         vmHandler.SHUTDOWN vmConf.name
+        vmHandler.stopQMP  vmConf.name
     catch e
       console.error "process:start:e"
       console.dir    e
