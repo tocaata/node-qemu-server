@@ -39,6 +39,7 @@ class Vm
     
   stopQMP: ->
     console.log "VM #{@name}: stopQMP called"
+    @qmp.stopReconnect()
     delete @qmp
     @qmp   = new qmp.Qmp @name
   

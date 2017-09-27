@@ -8,6 +8,11 @@ class Qmp
     @socket = undefined
     @port   = undefined
     @dataCb = undefined
+    @close  = false
+
+  stopReconnect: ->
+    console.log "Stop reconnect catched"
+    @close = true
 
   connect: (port, cb) ->
     if      typeof port is 'function'
@@ -82,7 +87,7 @@ class Qmp
       @socket.on 'error', (e) =>
         if e.message is 'This socket has been ended by the other party'
           console.log 'QEMU closed connection'
-        else
+        else if @close != true
           console.error 'QMP: ConnectError try reconnect'
           @connect cb
     , 1000
