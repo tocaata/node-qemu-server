@@ -6,13 +6,13 @@ class Vm
   constructor: (@cfg) ->
     @name    = @cfg.name
     @process = new proc.Process()
-    @qmp     = new qmp.Qmp @name
+    @qmp     = new qmp.Qmp @name, @cfg.settings.usbBus
     vmConf.save @cfg
   edit: (@cfg) ->
     delete @qmp
     delete @process
     @process = new proc.Process()
-    @qmp     = new qmp.Qmp @name
+    @qmp     = new qmp.Qmp @name, @cfg.settings.usbBus
 
     vmConf.save @cfg
     @

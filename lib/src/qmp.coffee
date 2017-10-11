@@ -4,7 +4,7 @@ util      = require 'util'
 vmHandler = require '../vmHandler'
 
 class Qmp
-  constructor:(@vmName) ->
+  constructor:(@vmName, @usb_bus = "usb-bus.0") ->
     @socket = undefined
     @port   = undefined
     @dataCb = undefined
@@ -129,8 +129,8 @@ class Qmp
 
   attachHid: (cb) ->
     that = @
-    that.sendCmd "device_add", {'driver':'usb-host', 'vendorid':'1133', 'productid':'49734', 'bus':'xhci.0'}, (result) ->
-      that.sendCmd "device_add", {'driver':'usb-host', 'vendorid':'6940', 'productid':'6919', 'bus':'xhci.0'}, (result1) ->
+    that.sendCmd "device_add", {'driver':'usb-host', 'vendorid':'1133', 'productid':'49734', 'bus': that.usb_bus}, (result) ->
+      that.sendCmd "device_add", {'driver':'usb-host', 'vendorid':'6940', 'productid':'6919', 'bus': that.usb_bus}, (result1) ->
         cb()
 
   unattachHid: (cb) ->
