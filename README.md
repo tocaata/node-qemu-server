@@ -31,11 +31,11 @@ Install node-qemu-server on Debian GNU/Linux and OS X (assume you have installed
     
 Now open your HTML5 Webbrowser and open http://127.0.0.1:4224
 
-![gui_host](https://raw.github.com/baslr/node-qemu-server/feature/new-guest-creation/doc/host.png)
-![gui_guests](https://raw.github.com/baslr/node-qemu-server/feature/new-guest-creation/doc/guests.png)
-![gui_disks](https://raw.github.com/baslr/node-qemu-server/feature/new-guest-creation/doc/disks.png)
-![gui_isos](https://raw.github.com/baslr/node-qemu-server/feature/new-guest-creation/doc/isos.png)
-![guest_creation](https://raw.github.com/baslr/node-qemu-server/feature/new-guest-creation/doc/guest_creation.png)
+![gui_host](https://raw.github.com/tocaata/node-qemu-server/master/doc/host.png)
+![gui_guests](https://raw.github.com/tocaata/node-qemu-server/master/doc/guests.png)
+![gui_disks](https://raw.github.com/tocaata/node-qemu-server/master/doc/disks.png)
+![gui_isos](https://raw.github.com/tocaata/node-qemu-server/master/doc/isos.png)
+![guest_creation](https://raw.github.com/tocaata/node-qemu-server/master/doc/guest_creation.png)
 
 ---
 setup and control qemu instances with Node.js
