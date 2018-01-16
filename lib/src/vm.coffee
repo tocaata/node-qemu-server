@@ -1,6 +1,7 @@
 proc   = require './process'
 qmp    = require './qmp'
 vmConf = require('./vmCfg')
+jsonHelper = require './jsonHelper'
 
 class Vm
   constructor: (@cfg) ->
@@ -8,7 +9,14 @@ class Vm
     @process = new proc.Process()
     @qmp     = new qmp.Qmp @name, @cfg.settings.usbBus
     vmConf.save @cfg
-  edit: (@cfg) ->
+  edit: (cfg) ->
+    for key,value of cfg
+      if @cfg.hasOwnProperty key
+        if @cfg[key].constructor == Object && value.constructor == Object
+          jsonHelper.update(@cfg[key], value)
+        else
+          @cfg[key] = value
+
     delete @qmp
     delete @process
     @process = new proc.Process()

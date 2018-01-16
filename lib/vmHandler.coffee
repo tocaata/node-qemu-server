@@ -230,7 +230,8 @@ module.exports.loadFiles = ->
   
   for vmCfgFile in config.getVmConfigs()                                        # vm config files
     vmCfg = JSON.parse fs.readFileSync "#{process.cwd()}/vmConfigs/#{vmCfgFile}"
-
+    
+    vmCfg.status = "stopped"
     if vmCfg.settings.qmpPort
       config.setToUsed 'qmp',     vmCfg.settings.qmpPort
     if vmCfg.settings.vnc

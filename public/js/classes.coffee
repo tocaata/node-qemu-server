@@ -422,7 +422,8 @@ class FormCreateVMViewModel
     else if vm.hardware.partition != false
       @diskOrPartition('partition')
       @partition(vm.hardware.partition)
-
+    
+    @selectedIso(vm.hardware.iso)
     @pciDevices(vm.hardware.pci)
     @otherOptions(vm.hardware.otherOptions)
     @bootVM(vm.settings.boot)

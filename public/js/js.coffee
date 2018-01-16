@@ -56,8 +56,8 @@ app.config         = config
     imagesVM.add disk
     imagesVM.changePercentage disk, disk.percentUsed
     
-    if ! vmsVM.diskUsed disk.name
-      formCreateVMVM.addDisk disk.name
+    #if ! vmsVM.diskUsed disk.name
+    formCreateVMVM.addDisk disk.name
 
   app.socket.on 'set-iso', (iso) ->
     formCreateVMVM.addIso iso.name
