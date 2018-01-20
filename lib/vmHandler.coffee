@@ -247,6 +247,7 @@ module.exports.loadFiles = ->
         console.log "vm #{vmCfg.name} started"
         socketServer.toAll 'set-vm-status', vmCfg.name, 'running'
         obj.setStatus 'running'
+    vmCfg.status = "stopped"
     
   console.log "vms found in vmConfigs/"
   console.log  vms.length
