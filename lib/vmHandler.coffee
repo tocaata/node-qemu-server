@@ -230,8 +230,7 @@ module.exports.loadFiles = ->
   
   for vmCfgFile in config.getVmConfigs()                                        # vm config files
     vmCfg = JSON.parse fs.readFileSync "#{process.cwd()}/vmConfigs/#{vmCfgFile}"
-    
-    vmCfg.status = "stopped"
+
     if vmCfg.settings.qmpPort
       config.setToUsed 'qmp',     vmCfg.settings.qmpPort
     if vmCfg.settings.vnc
@@ -241,7 +240,9 @@ module.exports.loadFiles = ->
 
     obj = qemu.createVm vmCfg
     vms.push obj
-    if vmCfg.settings.boot is true
+
+    # if vm status is not stopped, it should crash at last boot. So don't boot again.
+    if vmCfg.settings.boot is true && vmCfg.status == "stopped"
       obj.start ->
         console.log "vm #{vmCfg.name} started"
         socketServer.toAll 'set-vm-status', vmCfg.name, 'running'
