@@ -241,13 +241,16 @@ module.exports.loadFiles = ->
     obj = qemu.createVm vmCfg
     vms.push obj
 
+    bootVm = (vmName, vm) ->
+      console.log "vm #{vmName} started"
+      socketServer.toAll 'set-vm-status', vmName, 'running'
+      vm.setStatus 'running'
+
     # if vm status is not stopped, it should crash at last boot. So don't boot again.
     if vmCfg.settings.boot is true && vmCfg.status == "stopped"
-      obj.start ->
-        console.log "vm #{vmCfg.name} started"
-        socketServer.toAll 'set-vm-status', vmCfg.name, 'running'
-        obj.setStatus 'running'
-    vmCfg.status = "stopped"
+      obj.start bootVm.bind(undefined, vmCfg.name, obj)
+    else
+      obj.setStatus 'stopped'
     
   console.log "vms found in vmConfigs/"
   console.log  vms.length
