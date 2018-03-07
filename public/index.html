@@ -415,6 +415,7 @@
                       <label>
                         <input type="checkbox" data-bind="checked: enableVNC">
                         enable VNC
+                        <input id="vncPassword" type="password" class="form-control" data-bind="value: vncPassword, visible: enableVNC()">
                       </label>
                       <span class="help-block">Connect to the VM via VNC</span>
                     </div>
@@ -511,6 +512,7 @@
                               <li><a href="#" data-bind="click: selectOption.bind($data, '-set')">set</a></li>
                               <li><a href="#" data-bind="click: selectOption.bind($data, '-usb')">usb</a></li>
                               <li><a href="#" data-bind="click: selectOption.bind($data, '-usbdevice')">usbdevice</a></li>
+                              <li><a href="#" data-bind="click: selectOption.bind($data, '-vnc')">vnc</a></li>
                             </ul>
                           </div>
                           <span class="input-group-addon" id="basic-addon1" data-bind="text: option">@</span>

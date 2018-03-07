@@ -26,6 +26,9 @@ module.exports.vmCfgToArgs = (cfg, cb = ->) ->
       .usb()
 #       .noStart()
 #       .noShutdown()
+
+  unless cfg.hardware.vgaCard?
+    args.nographic()
   
   args.cpus(cfg.hardware.cpus)
       .ram( cfg.hardware.ram)
@@ -73,7 +76,7 @@ module.exports.vmCfgToArgs = (cfg, cb = ->) ->
   if cfg.hardware.macAddr.length is 17
     args.net cfg.hardware.macAddr, cfg.hardware.netCard
 
-  if cfg.settings.vnc
+  if cfg.settings.vnc?
     args.vnc cfg.settings.vnc
     
   if cfg.settings.bootDevice then switch cfg.settings.bootDevice

@@ -3,7 +3,8 @@ crypto = require 'crypto'
 
 class Args
   constructor: ->
-    @args    = [ '-nographic']
+    # @args    = [ '-nographic']
+    @args    = []
     @qmpPort = 0
     @macAddr = crypto.randomBytes(6).toString('hex').match(/.{2}/g).join ':'
 
@@ -26,6 +27,10 @@ class Args
   
   nodefaults: ->
     @pushArg '-nodefaults'
+    return this
+
+  nographic:->
+    @pushArg '-nographic'
     return this
 
   ###
@@ -102,6 +107,7 @@ class Args
   
   vnc: (port) ->
     @pushArg '-vnc', ":#{port}"
+    @pushArg '-usbdevice', "tablet"
     return this
   
   spice: (port, addr, password = false) ->

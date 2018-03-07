@@ -127,6 +127,9 @@ class Qmp
   balloon: (mem, cb) ->
     @sendCmd 'balloon', {value:mem}, cb
 
+  setVncPass: (pass, cb) ->
+    @sendCmd 'change', {'device': 'vnc', 'target': 'password', 'arg': pass}, cb
+
   attachHid: (cb) ->
     that = @
     that.sendCmd "device_add", {'driver':'usb-host', 'vendorid':'1133', 'productid':'49734', 'bus': that.usb_bus}, (result) ->

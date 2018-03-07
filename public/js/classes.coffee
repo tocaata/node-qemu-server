@@ -188,7 +188,7 @@ class FormCreateVMViewModel
     @availablePciDevices  = ['02:00.0', '02:00.1', '03:00.0', '03:00.1']
     @netCards    = ['virtio', 'rtl8139', 'e1000']
     @keyboards   = ['en-us',        'de']
-    @vgaCards    = ['none', 'std', 'qxl']
+    @vgaCards    = ['none', 'std', 'qxl', 'vmware']
     @netTypes    = ['normal',   'bridge']
     @archs       = ['pc', 'pc-i440fx-2.7', 'pc-i440fx-2.8', 'q35', 'pc-q35-2.4', 'pc-q35-2.5', 'pc-q35-2.6', 'pc-q35-2.7']
     @pciDevices  = []
@@ -262,6 +262,7 @@ class FormCreateVMViewModel
     @bootDevice    = ko.observable()
     @pciDevice     = ko.observable()
     @enableVNC     = ko.observable()
+    @vncPassword   = ko.observable()
     @enableSpice   = ko.observable()
     @option        = ko.observable()
     @argument      = ko.observable()
@@ -335,6 +336,7 @@ class FormCreateVMViewModel
     @bootVM        false
     @bootDevice    @bootDevices[0]
     @enableVNC     true
+    @vncPassword   ''
     @enableSpice   true
     
     @enableVGACard false
@@ -395,11 +397,12 @@ class FormCreateVMViewModel
              otherOptions : @otherOptions()
              vgaCard      : if @enableVGACard() then @vgaCard() else 'none' }
          , settings: {
-             boot       : @bootVM()
-             bootDevice : @bootDevice()
-             vnc        : @enableVNC()
-             spice      : @enableSpice()
-             keyboard   : @keyboard() }
+             boot        : @bootVM()
+             bootDevice  : @bootDevice()
+             vnc         : @enableVNC()
+             vncPassword : @vncPassword()
+             spice       : @enableSpice()
+             keyboard    : @keyboard() }
          , hid: false}
     return vm
 
@@ -429,6 +432,9 @@ class FormCreateVMViewModel
     @bootVM(vm.settings.boot)
     @bootDevice(vm.settings.bootDevice)
     @enableVNC(vm.settings.vnc)
+    if vm.settings.vnc?
+      @vncPassword(vm.settings.vncPassword)
+
     @enableSpice(vm.settings.spice)
     @keyboard(vm.settings.keyboard)
     if vm.hardware.macAddr.length is 17
