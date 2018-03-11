@@ -432,7 +432,7 @@ class FormCreateVMViewModel
     @bootVM(vm.settings.boot)
     @bootDevice(vm.settings.bootDevice)
     @enableVNC(vm.settings.vnc)
-    if vm.settings.vnc?
+    if vm.settings.vnc
       @vncPassword(vm.settings.vncPassword)
 
     @enableSpice(vm.settings.spice)

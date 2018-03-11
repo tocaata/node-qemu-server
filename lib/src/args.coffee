@@ -106,7 +106,7 @@ class Args
     return this
   
   vnc: (port) ->
-    @pushArg '-vnc', ":#{port}"
+    @pushArg '-vnc', ":#{port},password"
     @pushArg '-usbdevice', "tablet"
     return this
   

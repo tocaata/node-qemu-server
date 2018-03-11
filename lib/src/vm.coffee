@@ -39,7 +39,7 @@ class Vm
     @process.start @cfg
     @qmp.connect   @cfg.settings.qmpPort, (ret) =>
       if that.cfg.settings.vnc
-        that.qmp.setVncPass(that.cfg.settings.vnc_password, -> )
+        that.qmp.setVncPass(that.cfg.settings.vncPassword, -> )
       cb ret
       @status()
   

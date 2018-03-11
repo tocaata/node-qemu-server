@@ -128,7 +128,7 @@ class Qmp
     @sendCmd 'balloon', {value:mem}, cb
 
   setVncPass: (pass, cb) ->
-    @sendCmd 'change', {'device': 'vnc', 'target': 'password', 'arg': pass}, cb
+    @sendCmd 'set_password', {'protocol': 'vnc', 'password': pass}, cb
 
   attachHid: (cb) ->
     that = @
