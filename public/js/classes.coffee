@@ -426,6 +426,13 @@ class FormCreateVMViewModel
       @diskOrPartition('partition')
       @partition(vm.hardware.partition)
     
+    if @vgaCards.slice(1).indexOf(vm.hardware.vgaCard) >= 0
+      @enableVGACard(true)
+      @vgaCard(vm.hardware.vgaCard)
+    else
+      @enableVGACard(false)
+      @vgaCard('none')
+
     @selectedIso(vm.hardware.iso)
     @pciDevices(vm.hardware.pci)
     @otherOptions(vm.hardware.otherOptions)
