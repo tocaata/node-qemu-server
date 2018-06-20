@@ -5,6 +5,7 @@ var io = require('socket.io-client');
 class QMP {
   constructor(url) {
     this.url = url;
+    this.commands = [];
     this.socket = io.connect(url);
     this.socket.on('connect', () => {
       console.log('SOCK -> connected');
@@ -14,10 +15,10 @@ class QMP {
       console.log(`message: ${msg}`);
     });
 
-    this.socket.on('update-config', () => {});
-    this.socket.on('set-vm', () => {});
-    this.socket.on('set-host', () => {});
-    this.socket.on('set-disk', () => {});
+    this.socket.on('update-config', () => {console.log('update-config')});
+    this.socket.on('set-vm', () => {console.log('set-vm');});
+    this.socket.on('set-host', () => {console.log('set-host')});
+    this.socket.on('set-disk', () => {console.log('set-disk')});
 
     this.socket.on('qmp', (ret) => {
       let cmd = this.commands.pop();
@@ -25,7 +26,7 @@ class QMP {
     });
   }
 
-  exec(command, callback) {
+  exec(vmName, command, args, callback) {
     if (typeof(callback) === 'function') {
       1
     } else {
@@ -33,7 +34,7 @@ class QMP {
         this.commands.push((content) => {
           resolve(content);
         });
-        this.socket.emit(JSON.stringify(command));
+        this.socket.emit('qmp', command, JSON.stringify(args), vmName);
       });
     }
   }
@@ -45,7 +46,7 @@ class QMP {
 
 async function run() {
   let qmp = new QMP('http://192.168.0.3:4224/');
-  setTimeout(() => {console.log("exec\n");qmp.exec({add_object: 'ass'});}, 2000)
+  setTimeout(() => {console.log("exec\n");qmp.exec('win10', {add_object: 'ass'});}, 2000)
   // let result = await qmp.exec({add_object: 'ass'});
   // console.log(result);
   // result = await qmp.exec({add_object: 'bbb'});

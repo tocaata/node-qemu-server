@@ -48,8 +48,8 @@ class Vm
       cb ret
       @status()
 
-  qmp: (args, cb) ->
-    @qmp.sendCmd args, cb
+  qmp: (cmd, args, cb) ->
+    @qmp.sendCmd cmd, args, cb
     
   stopQMP: ->
     console.log "VM #{@name}: stopQMP called"

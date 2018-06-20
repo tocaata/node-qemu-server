@@ -146,10 +146,10 @@ module.exports.qmpCommand = (qmpCmd, vmName, cb) ->
       return
   cb {type:'error', msg:'VM not available'}
 
-module.exports.qmp = (qmpCmd, vmName, cb) ->
+module.exports.qmp = (qmpCmd, args, vmName, cb) ->
   for vm in vms
     if vm.name is vmName
-      vm.qmp qmpCmd, (ret) ->
+      vm.qmp qmpCmd, args, (ret) ->
         cb ret.data
       return
   cb {type:'error', msg:'VM not available'}
