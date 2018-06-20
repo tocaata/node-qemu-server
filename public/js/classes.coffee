@@ -190,7 +190,7 @@ class FormCreateVMViewModel
     @keyboards   = ['en-us',        'de']
     @vgaCards    = ['none', 'std', 'qxl', 'vmware']
     @netTypes    = ['normal',   'bridge']
-    @archs       = ['pc', 'pc-i440fx-2.7', 'pc-i440fx-2.8', 'q35', 'pc-q35-2.4', 'pc-q35-2.5', 'pc-q35-2.6', 'pc-q35-2.7']
+    @archs       = ['pc', 'pc-i440fx-2.7', 'pc-i440fx-2.8', 'q35', 'pc-q35-2.4', 'pc-q35-2.5', 'pc-q35-2.6', 'pc-q35-2.7', 'pc-q35-2.8', 'pc-q35-2.9']
     @pciDevices  = []
 
     @cpuModels = [  {value:'QEMU 32-bit Virtual CPU version 1.6.0', qValue:'qemu32', tokens:['32bit', 'qemu']}

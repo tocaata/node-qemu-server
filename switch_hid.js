@@ -1,74 +1,55 @@
 #!/usr/bin/env node
 
-var WebSocketClient = require('websocket').client;
-
-
+var io = require('socket.io-client');
 
 class QMP {
   constructor(url) {
-    super(url);
     this.url = url;
-    this.client = new WebSocketClient();
-    this.commands = [];
-  }
+    this.socket = io.connect(url);
+    this.socket.on('connect', () => {
+      console.log('SOCK -> connected');
+    });
 
-  static connect(url) {
-    let qmp = new QMP(url);
-    qmp._connect(url);
+    this.socket.on('msg', (msg) => {
+      console.log(`message: ${msg}`);
+    });
+
+    this.socket.on('update-config', () => {});
+    this.socket.on('set-vm', () => {});
+    this.socket.on('set-host', () => {});
+    this.socket.on('set-disk', () => {});
+
+    this.socket.on('qmp', (ret) => {
+      let cmd = this.commands.pop();
+      cmd(ret);
+    });
   }
 
   exec(command, callback) {
-    return new Promise((resolve, reject) => {
-      this.sendUTF(command.toString());
-      this.commands.push((content) => {
-        resolve(content);
-      })
-    });
+    if (typeof(callback) === 'function') {
+      1
+    } else {
+      return new Promise((resolve, reject) => {
+        this.commands.push((content) => {
+          resolve(content);
+        });
+        this.socket.emit(JSON.stringify(command));
+      });
+    }
   }
 
-  _connect(url) {
-    this.client.on('connectFailed', (error) => {
-      console.log('Connect Error: ' + error.toString());
-    });
-
-    this.client.on('connect', (connection) => {
-      console.log('WebSocket Client Connected');
-      connection.on('error', (error) => {
-        console.log('Connect Error: ' + error.toString());
-      });
-
-      connection.on('close', () => {
-        console.log('echo-protocol connection closed');
-      });
-
-      connection.on('message', (message) => {
-        if (message.type == 'utf8') {
-          console.log(`Received: '${message.utf8Data}'`);
-          let cmd = this.commands.pop();
-          cmd(message);
-        }
-      });
-    });
-    this.client.connect(`ws://${url}/`, 'echo-protocol');
+  close() {
   }
 }
 
-client.on('connectFailed', (error) => {
-  console.log('Connect Error: ' + error.toString());
-});
-
-client.on('connect', (connection) => {
-  console.log('WebSocket Client Connected');
-  connection.on('error', (error) => {
-    1
-  });
-});
 
 async function run() {
-  let qmp = QMP.connect('localhost:4334');
-  let result = await qmp.exec({add_object: 'ass'});
-  result = await qmp.exec({add_object: 'bbb'});
-  result = await qmp.exec({remove_object: 'ccc'});
+  let qmp = new QMP('http://192.168.0.3:4224/');
+  setTimeout(() => {console.log("exec\n");qmp.exec({add_object: 'ass'});}, 2000)
+  // let result = await qmp.exec({add_object: 'ass'});
+  // console.log(result);
+  // result = await qmp.exec({add_object: 'bbb'});
+  // result = await qmp.exec({remove_object: 'ccc'});
 }
 
 run();

@@ -38,6 +38,12 @@ module.exports.start = (httpServer) ->
       console.log "QMP-Command #{qmpCmd}"
       vmHandler.qmpCommand qmpCmd, vmName
 
+    # For node client. You can run any qmp command.
+    sock.on 'qmp', (qmpCmd, vmName) ->
+      console.log "QMP #{qmpCmd}"
+      vmHandler.qmp qmpCmd, vmName, ret ->
+        sock.emit 'qmp', ret
+
     sock.on 'attachHid', (vmName) ->
       vmHandler.attachHid vmName, () ->
         console.log "AddHid #{vmName}"

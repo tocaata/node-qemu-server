@@ -47,6 +47,9 @@ class Vm
     @qmp.connect   @cfg.settings.qmpPort, (ret) =>
       cb ret
       @status()
+
+  qmp: (args, cb) ->
+    @qmp.sendCmd args, cb
     
   stopQMP: ->
     console.log "VM #{@name}: stopQMP called"
