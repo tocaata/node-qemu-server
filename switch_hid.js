@@ -34,19 +34,21 @@ class QMP {
         this.commands.push((content) => {
           resolve(content);
         });
-        this.socket.emit('qmp', command, JSON.stringify(args), vmName);
+        this.socket.emit('qmp', command, args, vmName);
       });
     }
   }
 
   close() {
+    this.socket.disconnect();
   }
 }
 
 
 async function run() {
   let qmp = new QMP('http://192.168.0.3:4224/');
-  setTimeout(() => {console.log("exec\n");qmp.exec('win10', {add_object: 'ass'});}, 2000)
+  setTimeout(() => {console.log("exec\n");qmp.exec('win10', 'system_powerdown', {}); qmp.close();}, 2000);
+  
   // let result = await qmp.exec({add_object: 'ass'});
   // console.log(result);
   // result = await qmp.exec({add_object: 'bbb'});

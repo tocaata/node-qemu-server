@@ -48,7 +48,7 @@ class Vm
       cb ret
       @status()
 
-  qmp: (cmd, args, cb) ->
+  qmpCmd: (cmd, args, cb) ->
     @qmp.sendCmd cmd, args, cb
     
   stopQMP: ->
