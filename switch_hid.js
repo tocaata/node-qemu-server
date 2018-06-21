@@ -5,7 +5,7 @@ var fs = require('fs');
 
 const serverUrl = 'http://192.168.0.3:4224/';
 const vms = ['win10', 'MacOS Sierra'];
-const curVmFile ='/var/run/active_vm';
+const curVmFile ='active_vm';
 const keyboardPath = "/dev/input/by-id/usb-Corsair_Corsair_K65_Gaming_Keyboard-if02-event-kbd";
 const mousePath = "/dev/input/by-id/usb-Logitech_Gaming_Mouse_G300-event-mouse";
 
@@ -57,7 +57,6 @@ class QMP {
 
 async function run() {
   let activeVm = fs.readFileSync(curVmFile, 'utf-8');
-  console.log(`current vm is '${activeVm}'`);
   if (activeVm.length === 0 || vms.indexOf(activeVm) < 0) {
     activeVm = vms[0];
   }
@@ -73,7 +72,7 @@ async function run() {
   const vmName = vms[pos];
 
   fs.writeFileSync(curVmFile, vmName);
-  ret = await qmp.exec(vmName, 'object-add', {"qom-type": "input-linux", "id":"kbd3", "props": {"evdev":keyboardPath, "grab_all": true}});
+  ret = await qmp.exec(vmName, 'object-add', {"qom-type": "input-linux", "id":"kbd3", "props": {"evdev":keyboardPath, "repeat": true, "grab_all": true}});
   console.log(ret);
   ret = await qmp.exec(vmName, 'object-add', {"qom-type": "input-linux", "id":"mouse1", "props": {"evdev":mousePath}});
   console.log(ret);
