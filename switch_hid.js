@@ -1,6 +1,14 @@
 #!/usr/bin/env node
 
 var io = require('socket.io-client');
+var fs = require('fs');
+
+const serverUrl = 'http://192.168.0.3:4224/';
+const vms = ['win10', 'MacOS Sierra'];
+const curVmFile ='/var/run/active_vm';
+const keyboardPath = "/dev/input/by-id/usb-Corsair_Corsair_K65_Gaming_Keyboard-if02-event-kbd";
+const mousePath = "/dev/input/by-id/usb-Logitech_Gaming_Mouse_G300-event-mouse";
+
 
 class QMP {
   constructor(url) {
@@ -48,16 +56,36 @@ class QMP {
 
 
 async function run() {
-  let qmp = new QMP('http://192.168.0.3:4224/');
+  let activeVm = fs.readFileSync(curVmFile, 'utf-8');
+  console.log(`current vm is '${activeVm}'`);
+  if (activeVm.length === 0 || vms.indexOf(activeVm) < 0) {
+    activeVm = vms[0];
+  }
+  console.log(`current vm is '${activeVm}'`);
+  let qmp = new QMP(serverUrl);
+  let ret = await qmp.exec(activeVm, 'object-del', {"id": "kbd3"});
+  console.log(ret);
+  ret = await qmp.exec(activeVm, 'object-del', {"id": "mouse1"});
+  console.log(ret);
 
-  let result = await qmp.exec('win10', 'system_powerdown', {});
-  console.log(result);
-  setTimeout(() => {console.log("exec\n");qmp.exec('win10', 'system_powerdown', {}); qmp.close();}, 2000);
+  let pos = vms.indexOf(activeVm);
+  pos = (pos + 1) % vms.length;
+  const vmName = vms[pos];
+
+  fs.writeFileSync(curVmFile, vmName);
+  ret = await qmp.exec(vmName, 'object-add', {"qom-type": "input-linux", "id":"kbd3", "props": {"evdev":keyboardPath, "grab_all": true}});
+  console.log(ret);
+  ret = await qmp.exec(vmName, 'object-add', {"qom-type": "input-linux", "id":"mouse1", "props": {"evdev":mousePath}});
+  console.log(ret);
+
+  qmp.close();
+  //setTimeout(() => {console.log("exec\n");qmp.exec('win10', 'system_powerdown', {}); qmp.close();}, 2000);
   
   // let result = await qmp.exec({add_object: 'ass'});
   // console.log(result);
   // result = await qmp.exec({add_object: 'bbb'});
   // result = await qmp.exec({remove_object: 'ccc'});
 }
+
 
 run();
