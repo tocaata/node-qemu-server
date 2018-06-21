@@ -15,18 +15,17 @@ module.exports.start = (httpServer) ->
     socks[sock.id] = sock
     console.log "SOCK -> CON #{sock.handshake.address.address}"
     console.log "SOCK -> count: #{Object.keys(socks).length}"
-  
-    sock.emit('set-iso', iso) for iso in vmHandler.getIsos()                    # emit iso  names, client drops duplicates
-    
-    for disk in vmHandler.getDisks()                                            # emit disks, client drops duplicates
-      Disk.info disk, (ret) ->
-        sock.emit 'set-disk', ret.data
 
-    sock.emit('update-config', settings)
-    
-    sock.emit('set-vm', vm.cfg) for vm in vmHandler.getVms()                    # emit vms, client drops duplicates
+    sock.on 'initialize-page', () ->
+      console.log "Initialize page"
+      sock.emit('set-iso', iso) for iso in vmHandler.getIsos()                    # emit iso  names, client drops duplicates
+      for disk in vmHandler.getDisks()                                            # emit disks, client drops duplicates
+        Disk.info disk, (ret) ->
+          sock.emit 'set-disk', ret.data
 
-    sock.emit('set-host', vmHandler.getHost())
+      sock.emit('update-config', settings)
+      sock.emit('set-vm', vm.cfg) for vm in vmHandler.getVms()                    # emit vms, client drops duplicates
+      sock.emit('set-host', vmHandler.getHost())
     
     #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   #
   

@@ -28,7 +28,9 @@ class QMP {
 
   exec(vmName, command, args, callback) {
     if (typeof(callback) === 'function') {
-      1
+      this.commands.push(callback);
+      this.socket.emit('qmp', command, args, vmName);
+      return ;
     } else {
       return new Promise((resolve, reject) => {
         this.commands.push((content) => {
@@ -47,6 +49,9 @@ class QMP {
 
 async function run() {
   let qmp = new QMP('http://192.168.0.3:4224/');
+
+  let result = await qmp.exec('win10', 'system_powerdown', {});
+  console.log(result);
   setTimeout(() => {console.log("exec\n");qmp.exec('win10', 'system_powerdown', {}); qmp.close();}, 2000);
   
   // let result = await qmp.exec({add_object: 'ass'});

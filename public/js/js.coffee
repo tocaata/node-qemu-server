@@ -19,6 +19,7 @@ app.config         = config
   
   app.socket.on 'connect', ->
     console.log 'SOCK -> connected'
+    app.socket.emit 'initialize-page'
       
   app.socket.on 'msg', (msg) ->
     $.notification msg:msg.msg, type:msg.type, fixed:true
