@@ -149,8 +149,9 @@ module.exports.qmpCommand = (qmpCmd, vmName, cb) ->
 module.exports.qmp = (qmpCmd, args, vmName, cb) ->
   for vm in vms
     if vm.name is vmName
-      vm.qmpCmd qmpCmd, args, (ret) ->
-        cb ret.data
+      if vm.cfg.status is 'runing'
+        vm.qmpCmd qmpCmd, args, (ret) ->
+          cb ret.data
       return
   cb {type:'error', msg:'VM not available'}
 

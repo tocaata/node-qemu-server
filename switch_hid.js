@@ -72,7 +72,13 @@ async function run() {
   const vmName = vms[pos];
 
   fs.writeFileSync(curVmFile, vmName);
-  ret = await qmp.exec(vmName, 'object-add', {"qom-type": "input-linux", "id":"kbd3", "props": {"evdev":keyboardPath, "repeat": true, "grab_all": true}});
+
+  let argProps = {"evdev":keyboardPath, "grab_all": true};
+  if (pos === 0) {
+    argProps = Object.assign(argProps, {"repeat": true});
+  }
+
+  ret = await qmp.exec(vmName, 'object-add', {"qom-type": "input-linux", "id":"kbd3", "props": argProps});
   console.log(ret);
   ret = await qmp.exec(vmName, 'object-add', {"qom-type": "input-linux", "id":"mouse1", "props": {"evdev":mousePath}});
   console.log(ret);
